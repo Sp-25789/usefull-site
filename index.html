@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>無限ツール / infinite tools / 无限工具</title>
-  <script src="https://jsdelivr.net"></script>
+  <script src="https://jsdelivr.net" defer></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #ffffff; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
@@ -233,8 +233,8 @@
       <div id="home-guest-hero" class="hero-box">
         <p data-i18n="heroText">すべての機能が、ここに。<br>今すぐサインアップしよう</p>
         <div class="hero-buttons">
-          <button class="btn-login" onclick="showPage('login')" data-i18n="loginBtn">ログイン</button>
 
+ログイン
 アカウント作成
 
 あなたにおすすめ
@@ -332,7 +332,7 @@ English
 
 const SUPABASE_URL = 'supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_1t8-2Ob1z5lOq1qrU7ASaA_Xavxz_Hq';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let sb = null;
 let currentLang = 'ja';
 let currentRank = 'guest';
 let currentUser = null;
@@ -496,16 +496,27 @@ langLabel: '🌐 中文 ▼'
 }
 };
 const rulesText = {
-ja: ルール・概要 1.コメント 以下のコメントは禁止します。発見次第削除します。 ・広告 ・スパム ・嫌がらせ 2.利用について アカウントを作成するとおすすめ機能を使用できたり 一部ツールの制限を解除されます。また、 ツールの新規公開(ランクがゴールド以上の場合)や コメントの投稿ができるようになります。 アカウントのパスワードを忘れた場合は登録メールで 使用することができますが、メールを受け取れない場合 には復旧することができません。 ユーザー名を忘れた場合は対応いたしかねます。 アカウントは迷惑行為やルール違反を複数回すると 削除されることがあります。 3.アカウント アカウントは最初「ノーマル」となっていて、条件を満たすと ランクアップします。 ○ブロンズ ○条件 ・ツール利用 10回 ・アクセス(ログイン) 5回 ○できること ・ツール利用 ・コメント投稿 ・ツール一部制限解除 ○シルバー ○条件 ・ツール利用 30回 ・アクセス 20回 ・連続アクセス 3日間 ・登録から15日以上経過 ○できること ・ツール利用 ・コメント投稿 ・一部ツール解除 ・新規ツール作成 ・ツール一部制限解除 ○ゴールド ○条件 ・ツール利用 80回 ・アクセス 50回 ・連続アクセス 1週間 ・登録から1ヶ月以上経過 ○できること ・ツール利用 ・コメント投稿 ・全ツール解除 ・新規ツール作成・公開 ・ツール一部制限解除 ○プラチナ ○条件 ・ツール利用 150回 ・アクセス 100回 ・連続アクセス 2週間 ・登録から3ヶ月以上経過 ○できること ・ツール利用 ・コメント投稿 ・全ツール解除 ・新規ツール作成・公開 ・ツール全制限解除 4.その他 管理者はSp-25789(https://mit.edu) です。サイトメンテナンスは基本的に予告なしで行います。 対応言語は日本語・英語・中国語(普通話、簡体字)の3つです。 英語・中国語は翻訳を利用しておりますので、一部不自然な 部分があります。ご了承ください。,
-en: 1. Comment The following comments are prohibited. I will delete it as soon as I find it. ・Advertisement ・Spam ・Harassment 2. About use If you create an account, you can use the recommended functions. The functions of some tools will be lifted. Also, New release of the tool (if the rank is gold or higher) and You will be able to post comments. If you forget your account password, in the registration email It can be restored, but if you can't receive emails It cannot be restored. If you forget your username, we will not be able to respond. If the account commits annoying behavior or violation of rules more than once It may be deleted. 3. Account The account is initially "normal", and if you meet the conditions I will rank up. ○Bronze ○Conditions ・Use the tool 10 times ・Access (login) 5 times ○What you can do ・Use of tools ・Comment posting ・Banned on some tool functions ○Silver ○Conditions ・Use the tool 30 times ・Access 20 times ・Continuous access for 3 days ・More than 15 days have passed since registration ○What you can do ・Use of tools ・Comment posting ・Releasing some tools ・Create a new tool ・Banned on some tool functions ○Gold ○Conditions ・Using tools 80 times ・Access 50 times ・Continuous access for 1 week ・More than 1 month has passed since registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Banned on some tool functions ○Platinum ○Conditions ・Use the tool 150 times ・Access 100 times ・Continuous access for 2 weeks ・Add more than 3 months from registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Ban lifted on all tool functions 4. Other The administrator is Sp-25789 (https://mit.edu) It is. Site maintenance is basically carried out without notice. There are three supported languages: Japanese, English, and Chinese (plain language, simplified Chinese). English and Chinese are translated, so some of them are unnatural. There is a part. Please understand.,
-zh: 规则・概要 1.评论 禁止以下评论，发现后会立即删除。 ・广告 ・垃圾邮件 ・骚扰 2.关于使用 创建账户后可以使用推荐功能， 部分工具的限制将被解除。另外， 工具的新公开（等级在黄金以上的情况下）和 可以发表评论了。 如果忘记账户密码，可以通过注册邮件 恢复，但如果收不到邮件的话 无法恢复。 忘记用户名时无法处理。 账户如果多次有扰民行为或违反规则的行为 可能会被删除。 3.账户 账户一开始是“正常”，满足条件后 升级。 ○青铜 ○条件 ・使用工具 10次 ・访问（登录） 5次 ○能做的事情 ・工具使用 ・评论投稿 ・工具部分功能解禁 ○银色 ○条件 ・使用工具 30次 ・访问 20次 ・连续访问 3天 ・注册已过 15天 ○能做的事情 ・工具使用 ・评论投稿 ・部分工具解放 ・制作新工具 ・工具部分功能解禁 ○黄金 ○条件 ・使用工具 80次 ・访问 50次 ・连续访问 1周 ・从注册开始已经过了 1个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具部分功能解禁 ○白金 ○条件 ・使用工具 150次 ・访问 100次 ・连续访问 2周 ・注册已满 3个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具全部功能解禁 4.其他 管理员是Sp-25789 (https://mit.edu) 是。网站维护基本上不事先通知。 对应语言有日语、英语、中文（普通话、简体字）这3种。 因为英语、中文使用了翻译，所以有一部分不自然 有一部分。请谅解。
+ja: 'ルール・概要\n1.コメント\n以下のコメントは禁止します。発見次第削除します。\n・広告\n・スパム\n・嫌がらせ\n2.利用について\nアカウントを作成するとおすすめ機能を使用できたり\n一部ツールの制限を解除されます。また、\nツールの新規公開(ランクがゴールド以上の場合)や\nコメントの投稿ができるようになります。\nアカウントのパスワードを忘れた場合は登録メールで\n使用することができますが、メールを受け取れない場合\nには復旧することができません。\nユーザー名を忘れた場合は対応いたしかねます。\nアカウントは迷惑行為やルール違反を複数回すると\n削除されることがあります。\n3.アカウント\nアカウントは最初「ノーマル」となっていて、条件を満たすと\nランクアップします。\n○ブロンズ\n○条件\n・ツール利用 10回\n・アクセス(ログイン) 5回\n○できること\n・ツール利用\n・コメント投稿\n・ツール一部制限解除\n○シルバー\n○条件\n・ツール利用 30回\n・アクセス 20回\n・連続アクセス 3日間\n・登録から15日以上経過\n○できること\n・ツール利用\n・コメント投稿\n・一部ツール解除\n・新規ツール作成\n・ツール一部制限解除\n○ゴールド\n○条件\n・ツール利用 80回\n・アクセス 50回\n・連続アクセス 1週間\n・登録から1ヶ月以上経過\n○できること\n・ツール利用\n・コメント投稿\n・全ツール解除\n・新規ツール作成・公開\n・ツール一部制限解除\n○プラチナ\n○条件\n・ツール利用 150回\n・アクセス 100回\n・連続アクセス 2週間\n・登録から3ヶ月以上経過\n○できること\n・ツール利用\n・コメント投稿\n・全ツール解除\n・新規ツール作成・公開\n・ツール全制限解除\n4.その他\n管理者はSp-25789(mit.edu)\nです。サイトメンテナンスは基本的に予告なしで行います。\n対応言語は日本語・英語・中国語(普通話、簡体字)の3つです。\n英語・中国語は翻訳を利用しておりますので、一部不自然な\n部分があります。ご了承ください。',
+en: '1. Comment\nThe following comments are prohibited. I will delete it as soon as I find it.\n・Advertisement\n・Spam\n・Harassment\n2. About use\nIf you create an account, you can use the recommended functions.\nThe functions of some tools will be lifted. Also,\nNew release of the tool (if the rank is gold or higher) and\nYou will be able to post comments.\nIf you forget your account password, in the registration email\nIt can be restored, but if you can't receive emails\nIt cannot be restored.\nIf you forget your username, we will not be able to respond.\nIf the account commits annoying behavior or violation of rules more than once\nIt may be deleted.\n3. Account\nThe account is initially "normal", and if you meet the conditions\nI will rank up.\n○Bronze\n○Conditions\n・Use the tool 10 times\n・Access (login) 5 times\n○What you can do\n・Use of tools\n・Comment posting\n・Banned on some tool functions\n○Silver\n○Conditions\n・Use the tool 30 times\n・Access 20 times\n・Continuous access for 3 days\n・More than 15 days have passed since registration\n○What you can do\n・Use of tools\n・Comment posting\n・Releasing some tools\n・Create a new tool\n・Banned on some tool functions\n○Gold\n○Conditions\n・Using tools 80 times\n・Access 50 times\n・Continuous access for 1 week\n・More than 1 month has passed since registration\n○What you can do\n・Use of tools\n・Comment posting\n・Free all tools\n・Creation and publication of new tools\n・Banned on some tool functions\n○Platinum\n○Conditions\n・Use the tool 150 times\n・Access 100 times\n・Continuous access for 2 weeks\n・Add more than 3 months from registration\n○What you can do\n・Use of tools\n・Comment posting\n・Free all tools\n・Creation and publication of new tools\n・Ban lifted on all tool functions\n4. Other\nThe administrator is Sp-25789 (mit.edu)\nIt is. Site maintenance is basically carried out without notice.\nThere are three supported languages: Japanese, English, and Chinese (plain language, simplified Chinese).\nEnglish and Chinese are translated, so some of them are unnatural.\nThere is a part. Please understand.',
+zh: '规则・概要\n1.评论\n禁止以下评论，发现后会立即删除。\n・广告\n・垃圾邮件\n・骚扰\n2.关于使用\n创建账户后可以使用推荐功能，\n部分工具的限制将被解除。另外，\n工具的新公开（等级在黄金以上的情况下）和\n可以发表评论了。\n如果忘记账户密码，可以通过注册邮件\n恢复，但如果收不到邮件的话\n无法恢复。\n忘记用户名时无法处理。\n账户如果多次有扰民行为或违反规则的行为\n可能会被删除。\n3.账户\n账户一开始是“正常”，满足条件后\n升级。\n○青铜\n○条件\n・使用工具 10次\n・访问（登录） 5次\n○能做的事情\n・工具使用\n・评论投稿\n・工具部分功能解禁\n○银色\n○条件\n・使用工具 30次\n・访问 20次\n・连续访问 3天\n・注册已过 15天\n○能做的事情\n・工具使用\n・评论投稿\n・部分工具解放\n・制作新工具\n・工具部分功能解禁\n○黄金\n○条件\n・使用工具 80次\n・访问 50次\n・连续访问 1周\n・从注册开始已经过了 1个月以上\n○能做的事情\n・工具使用\n・评论投稿\n・全工具解放\n・新工具制作・公开\n・工具部分功能解禁\n○白金\n○条件\n・使用工具 150次\n・访问 100次\n・连续访问 2周\n・注册已满 3个月以上\n○能做的事情\n・工具使用\n・评论投稿\n・全工具解放\n・新工具制作・公开\n・工具全部功能解禁\n4.其他\n管理员是Sp-25789 (mit.edu)\n是。网站维护基本上不事先通知。\n对应语言有日语、英语、中文（普通话、简体字）这3种。\n因为英语、中文使用了翻译，所以有一部分不自然\n有一部分。请谅解。'
 };
+function getSb() {
+if (!sb && window.supabase) {
+sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+return sb;
+}
 function toInternalEmail(username) {
-const hex = Array.from(new TextEncoder().encode(username.trim()))
-.map(b => b.toString(16).padStart(2, '0')).join('');
-return u_${hex}@user.infinitetools.local;
+const bytes = new TextEncoder().encode(username.trim());
+let hex = '';
+for (let i = 0; i < bytes.length; i++) {
+hex += bytes[i].toString(16).padStart(2, '0');
+}
+return 'u_' + hex + '@user.infinitetools.local';
 }
 async function handleSignup() {
+const client = getSb();
+if (!client) return;
 const username = document.getElementById('signup-username').value.trim();
 const password = document.getElementById('signup-password').value;
 const msgEl = document.getElementById('signup-msg');
@@ -518,7 +529,7 @@ if (password.length < 6) {
 msgEl.textContent = 'パスワードは6文字以上にしてください。';
 return;
 }
-const { data, error } = await sb.auth.signUp({
+const { data, error } = await client.auth.signUp({
 email: toInternalEmail(username),
 password: password,
 options: { data: { username: username } }
@@ -527,12 +538,14 @@ if (error) {
 msgEl.textContent = 'エラー: ' + error.message;
 return;
 }
-if (data.user) {
+if (data && data.user) {
 await loadUserProfile(data.user, true);
 showPage('home');
 }
 }
 async function handleLogin() {
+const client = getSb();
+if (!client) return;
 const username = document.getElementById('login-username').value.trim();
 const password = document.getElementById('login-password').value;
 const msgEl = document.getElementById('login-msg');
@@ -541,13 +554,13 @@ if (!username || !password) {
 msgEl.textContent = 'ユーザー名とパスワードを入力してください。';
 return;
 }
-const { data, error } = await sb.auth.signInWithPassword({
+const { data, error } = await client.auth.signInWithPassword({
 email: toInternalEmail(username),
 password: password
 });
 if (error) {
 loginFailCount++;
-msgEl.textContent = ログイン失敗 (${loginFailCount}回目);
+msgEl.textContent = 'ログイン失敗 (' + loginFailCount + '回目)';
 if (loginFailCount >= 3) {
 document.getElementById('forgot-link-area').style.display = 'block';
 }
@@ -555,7 +568,7 @@ return;
 }
 loginFailCount = 0;
 document.getElementById('forgot-link-area').style.display = 'none';
-if (data.user) {
+if (data && data.user) {
 await loadUserProfile(data.user, true);
 showPage('home');
 }
@@ -568,6 +581,8 @@ document.getElementById('forgot-username').value = document.getElementById('logi
 showPage('forgot');
 }
 async function sendRecoveryOtp() {
+const client = getSb();
+if (!client) return;
 const username = document.getElementById('forgot-username').value.trim();
 const email = document.getElementById('forgot-email').value.trim();
 const msgEl = document.getElementById('forgot-msg');
@@ -577,7 +592,7 @@ if (!username || !email) {
 msgEl.textContent = 'ユーザー名とメールアドレスを入力してください。';
 return;
 }
-const { data: isMatch, error: rpcError } = await sb.rpc('verify_user_email', {
+const { data: isMatch, error: rpcError } = await client.rpc('verify_user_email', {
 p_username: username,
 p_email: email
 });
@@ -585,7 +600,7 @@ if (rpcError || !isMatch) {
 msgEl.textContent = 'ユーザー名またはメールアドレスが一致しません。';
 return;
 }
-const { error: otpError } = await sb.auth.signInWithOtp({
+const { error: otpError } = await client.auth.signInWithOtp({
 email: email,
 options: { shouldCreateUser: false }
 });
@@ -600,6 +615,8 @@ msgEl.style.color = '#2e8b57';
 msgEl.textContent = 'メールに6桁の認証コードを送信しました。';
 }
 async function verifyRecoveryOtp() {
+const client = getSb();
+if (!client) return;
 const token = document.getElementById('forgot-otp').value.trim();
 const msgEl = document.getElementById('forgot-msg');
 msgEl.style.color = '#d9534f';
@@ -608,7 +625,7 @@ if (token.length !== 6) {
 msgEl.textContent = '6桁の数字を入力してください。';
 return;
 }
-const { data, error } = await sb.auth.verifyOtp({
+const { data, error } = await client.auth.verifyOtp({
 email: recoveryEmailCache,
 token: token,
 type: 'email'
@@ -617,7 +634,7 @@ if (error) {
 msgEl.textContent = '認証コードが正しくありません。';
 return;
 }
-if (data.user) {
+if (data && data.user) {
 await loadUserProfile(data.user, true);
 showPage('home');
 }
@@ -639,21 +656,33 @@ return 'bronze';
 return 'normal';
 }
 async function loadUserProfile(user, isNewAccess) {
+const client = getSb();
+if (!client) return;
 currentUser = user;
-const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+const { data: profile } = await client.from('profiles').select('*').eq('id', user.id).single();
 if (!profile) return;
 if (isNewAccess) {
-const todayStr = new Date().toISOString().split('T');
+const todayStr = new Date().toISOString().split('T')[0];
 let newConsecutive = profile.consecutive_days;
 let newAccess = profile.access_count;
 if (profile.last_access_date !== todayStr) {
-const yesterday = new Date(Date.now() - 86400000).toISOString().split('T');
+const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 newConsecutive = (profile.last_access_date === yesterday) ? profile.consecutive_days + 1 : 1;
 newAccess += 1;
 }
-const updatedTemp = { ...profile, access_count: newAccess, consecutive_days: newConsecutive, last_access_date: todayStr };
+const updatedTemp = {
+id: profile.id,
+username: profile.username,
+recovery_email: profile.recovery_email,
+tool_uses: profile.tool_uses,
+created_at: profile.created_at,
+access_count: newAccess,
+consecutive_days: newConsecutive,
+last_access_date: todayStr
+};
 const newRank = evaluateRank(updatedTemp);
-const { data: updated } = await sb.from('profiles').update({
+updatedTemp.rank = newRank;
+const { data: updated } = await client.from('profiles').update({
 access_count: newAccess,
 consecutive_days: newConsecutive,
 last_access_date: todayStr,
@@ -691,13 +720,16 @@ return;
 document.getElementById('setting-recovery-email').value = currentProfile.recovery_email || '';
 document.getElementById('setting-msg').textContent = '';
 document.getElementById('account-status-info').innerHTML =
-ユーザー名: <strong>${currentProfile.username}</strong><br> +
-ランク: <strong>${currentProfile.rank}</strong><br> +
-ツール利用: ${currentProfile.tool_uses}回 / アクセス: ${currentProfile.access_count}回 / 連続: ${currentProfile.consecutive_days}日;
+'ユーザー名: ' + currentProfile.username + '
+' +
+'ランク: ' + currentProfile.rank + '
+' +
+'ツール利用: ' + currentProfile.tool_uses + '回 / アクセス: ' + currentProfile.access_count + '回 / 連続: ' + currentProfile.consecutive_days + '日';
 showPage('account');
 }
 async function saveRecoveryEmail() {
-if (!currentUser) return;
+const client = getSb();
+if (!client || !currentUser) return;
 const email = document.getElementById('setting-recovery-email').value.trim();
 const msgEl = document.getElementById('setting-msg');
 msgEl.style.color = '#d9534f';
@@ -705,12 +737,12 @@ if (!email) {
 msgEl.textContent = 'メールアドレスを入力してください。';
 return;
 }
-const { error: authError } = await sb.auth.updateUser({ email: email });
+const { error: authError } = await client.auth.updateUser({ email: email });
 if (authError) {
 msgEl.textContent = 'エラー: ' + authError.message;
 return;
 }
-const { data: updated, error: dbError } = await sb.from('profiles')
+const { data: updated, error: dbError } = await client.from('profiles')
 .update({ recovery_email: email })
 .eq('id', currentUser.id)
 .select().single();
@@ -723,17 +755,27 @@ msgEl.style.color = '#2e8b57';
 msgEl.textContent = '復旧用メールアドレスを保存しました。';
 }
 async function handleLogout() {
-await sb.auth.signOut();
+const client = getSb();
+if (client) {
+await client.auth.signOut();
+}
 currentUser = null;
 currentProfile = null;
 applyUserUI();
 showPage('home');
 }
 async function recordToolUse(toolId) {
-if (!currentUser || !currentProfile) return;
+const client = getSb();
+if (!client || !currentUser || !currentProfile) return;
 const newUses = currentProfile.tool_uses + 1;
-const newRank = evaluateRank({ ...currentProfile, tool_uses: newUses });
-const { data: updated } = await sb.from('profiles')
+const tempProf = {
+created_at: currentProfile.created_at,
+tool_uses: newUses,
+access_count: currentProfile.access_count,
+consecutive_days: currentProfile.consecutive_days
+};
+const newRank = evaluateRank(tempProf);
+const { data: updated } = await client.from('profiles')
 .update({ tool_uses: newUses, rank: newRank })
 .eq('id', currentUser.id)
 .select().single();
@@ -741,20 +783,21 @@ if (updated) {
 currentProfile = updated;
 applyUserUI();
 }
-const { data: existing } = await sb.from('tool_history')
-.select('*').eq('user_id', currentUser.id).eq('tool_id', toolId).single();
+const { data: existing } = await client.from('tool_history')
+.select('*').eq('user_id', currentUser.id).eq('tool_id', toolId).maybeSingle();
 if (existing) {
-await sb.from('tool_history')
+await client.from('tool_history')
 .update({ use_count: existing.use_count + 1, updated_at: new Date().toISOString() })
 .eq('id', existing.id);
 } else {
-await sb.from('tool_history').insert({ user_id: currentUser.id, tool_id: toolId, use_count: 1 });
+await client.from('tool_history').insert({ user_id: currentUser.id, tool_id: toolId, use_count: 1 });
 }
 await loadRecommendations();
 }
 async function loadRecommendations() {
-if (!currentUser) return;
-const { data: history } = await sb.from('tool_history')
+const client = getSb();
+if (!client || !currentUser) return;
+const { data: history } = await client.from('tool_history')
 .select('*').eq('user_id', currentUser.id).order('use_count', { ascending: false }).limit(3);
 const emptyBox = document.getElementById('rec-empty-box');
 const listBox = document.getElementById('rec-list-box');
@@ -765,15 +808,19 @@ return;
 }
 emptyBox.style.display = 'none';
 listBox.style.display = 'flex';
-listBox.innerHTML = history.map(h => {
-const tool = toolsData.find(t => t.id === h.tool_id);
-if (!tool) return '';
+let html = '';
+for (let i = 0; i < history.length; i++) {
+const h = history[i];
+const tool = toolsData.find(function(t) { return t.id === h.tool_id; });
+if (tool) {
 const label = tool[currentLang].replace(/\n/g, ' ');
-return <button class="rec-item-btn" onclick="openTool('${tool.id}')">${label}</button>;
-}).join('');
+html += '' + label + '';
+}
+}
+listBox.innerHTML = html;
 }
 function openTool(toolId) {
-const tool = toolsData.find(t => t.id === toolId);
+const tool = toolsData.find(function(t) { return t.id === toolId; });
 if (!tool) return;
 recordToolUse(toolId);
 if (tool.page) {
@@ -783,7 +830,7 @@ window.location.href = tool.url;
 }
 }
 function showPage(pageId) {
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
 document.getElementById('page-' + pageId).classList.add('active');
 if (pageId === 'tools') renderToolsTable();
 if (pageId === 'rules') renderRules();
@@ -792,17 +839,17 @@ function toggleLangMenu(event) {
 event.stopPropagation();
 document.getElementById('lang-popup-menu').classList.toggle('open');
 }
-document.addEventListener('click', () => {
+document.addEventListener('click', function() {
 document.getElementById('lang-popup-menu').classList.remove('open');
 });
 function selectLang(lang) {
 currentLang = lang;
 document.getElementById('lang-trigger').textContent = i18n[lang].langLabel;
-document.querySelectorAll('.lang-option').forEach(opt => {
+document.querySelectorAll('.lang-option').forEach(function(opt) {
 opt.classList.toggle('selected', opt.getAttribute('data-lang') === lang);
 });
 document.getElementById('lang-popup-menu').classList.remove('open');
-document.querySelectorAll('[data-i18n]').forEach(el => {
+document.querySelectorAll('[data-i18n]').forEach(function(el) {
 const key = el.getAttribute('data-i18n');
 if (i18n[lang][key]) {
 el.innerHTML = i18n[lang][key].replace(/\n/g, '
@@ -819,7 +866,8 @@ function renderToolsTable() {
 const tbody = document.getElementById('tool-table-body');
 tbody.innerHTML = '';
 const userLevel = rankOrder[currentRank];
-toolsData.forEach(tool => {
+for (let i = 0; i < toolsData.length; i++) {
+const tool = toolsData[i];
 const tr = document.createElement('tr');
 const tdName = document.createElement('td');
 tdName.innerHTML = tool[currentLang].replace(/\n/g, '
@@ -828,16 +876,16 @@ const tdUrl = document.createElement('td');
 const reqLevel = rankOrder[tool.req];
 if (userLevel >= reqLevel) {
 const text = tool.page ? reqLabels[currentLang].open : 'URL';
-tdUrl.innerHTML = <span class="tool-link" onclick="openTool('${tool.id}')">${text}</span>;
+tdUrl.innerHTML = '' + text + '';
 } else if (currentRank === 'guest') {
-tdUrl.innerHTML = <span class="tool-locked">${reqLabels[currentLang].unavailable}</span>;
+tdUrl.innerHTML = '' + reqLabels[currentLang].unavailable + '';
 } else {
-tdUrl.innerHTML = <span class="tool-locked">${reqLabels[currentLang][tool.req]}</span>;
+tdUrl.innerHTML = '' + reqLabels[currentLang][tool.req] + '';
 }
 tr.appendChild(tdName);
 tr.appendChild(tdUrl);
 tbody.appendChild(tr);
-});
+}
 }
 function renderRules() {
 document.getElementById('rules-text-container').textContent = rulesText[currentLang];
@@ -852,16 +900,16 @@ const totalSec = Math.floor(ms / 1000);
 const min = Math.floor(totalSec / 60);
 const sec = String(totalSec % 60).padStart(2, '0');
 const centi = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
-return ${min}:${sec}.${centi};
+return min + ':' + sec + '.' + centi;
 }
 function startTimer(id) {
 const t = timers[id];
 if (t.running) return;
 t.running = true;
 t.startTime = Date.now() - t.elapsed;
-t.interval = setInterval(() => {
+t.interval = setInterval(function() {
 t.elapsed = Date.now() - t.startTime;
-document.getElementById(sw${id}-time-display).textContent = formatTime(t.elapsed);
+document.getElementById('sw' + id + '-time-display').textContent = formatTime(t.elapsed);
 }, 10);
 updateSwButtonsUI(id);
 }
@@ -892,7 +940,7 @@ laps.unshift(formatTime(t.elapsed));
 renderLaps();
 } else {
 t.elapsed = 0;
-document.getElementById(sw${id}-time-display).textContent = '0:00.00';
+document.getElementById('sw' + id + '-time-display').textContent = '0:00.00';
 if (id === 1) {
 laps = [];
 renderLaps();
@@ -901,8 +949,8 @@ renderLaps();
 }
 function updateSwButtonsUI(id) {
 const t = timers[id];
-const leftBtn = document.getElementById(sw${id}-left-btn);
-const rightBtn = document.getElementById(sw${id}-right-btn);
+const leftBtn = document.getElementById('sw' + id + '-left-btn');
+const rightBtn = document.getElementById('sw' + id + '-right-btn');
 if (t.running) {
 leftBtn.textContent = i18n[currentLang].swLap;
 rightBtn.textContent = i18n[currentLang].swStop;
@@ -925,13 +973,22 @@ if (laps.length === 0) {
 tbody.innerHTML = '10:00.00';
 return;
 }
-tbody.innerHTML = laps.map((time, idx) => <tr><td>${laps.length - idx}</td><td>${time}</td></tr>).join('');
+let html = '';
+for (let i = 0; i < laps.length; i++) {
+html += '' + (laps.length - i) + '' + laps[i] + '';
 }
-(async function init() {
+tbody.innerHTML = html;
+}
+window.addEventListener('DOMContentLoaded', function() {
 renderToolsTable();
 renderRules();
-const { data: { session } } = await sb.auth.getSession();
-if (session && session.user) {
-await loadUserProfile(session.user, false);
+const client = getSb();
+if (client) {
+client.auth.getSession().then(function(res) {
+if (res.data && res.data.session && res.data.session.user) {
+loadUserProfile(res.data.session.user, false);
 }
-})();
+});
+}
+});
+
