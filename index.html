@@ -20,7 +20,8 @@
     }
     header h1 { font-size: 1.1rem; font-weight: bold; cursor: pointer; }
     .header-right { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
-    .user-badge { display: flex; align-items: center; gap: 6px; }
+    .user-badge { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+    .user-badge:hover { background: rgba(255,255,255,0.15); }
     .rank-avatar {
       width: 20px; height: 20px; border-radius: 50%;
       display: inline-flex; align-items: center; justify-content: center;
@@ -60,6 +61,11 @@
     }
     .recommend-empty { text-align: center; font-size: 0.9rem; line-height: 1.6; margin: 15px 0 25px; }
     .recommend-empty a { color: #1a75ff; text-decoration: underline; cursor: pointer; }
+    .recommend-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
+    .rec-item-btn {
+      background-color: #f0f8ff; border: 1px solid #4db8ff; color: #1a75ff;
+      padding: 8px 14px; border-radius: 4px; font-size: 0.85rem; cursor: pointer;
+    }
 
     .notice-badge {
       display: inline-block;
@@ -108,8 +114,20 @@
     .form-row label { display: block; font-size: 0.8rem; margin-bottom: 4px; }
     .form-row input { width: 100%; padding: 8px; border: none; background-color: #d9d9d9; border-radius: 3px; }
     .auth-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-    .auth-switch { font-size: 0.7rem; color: #1a75ff; cursor: pointer; text-decoration: underline; }
+    .auth-switch { font-size: 0.75rem; color: #1a75ff; cursor: pointer; text-decoration: underline; }
     .btn-auth-submit { background-color: #e6e68a; border: none; padding: 6px 16px; border-radius: 3px; font-size: 0.8rem; cursor: pointer; }
+    .auth-msg { font-size: 0.78rem; color: #d9534f; margin-top: 10px; text-align: center; }
+    .forgot-link-area { margin-top: 12px; text-align: center; display: none; }
+    .forgot-link-area a { font-size: 0.8rem; color: #1a75ff; text-decoration: underline; cursor: pointer; }
+
+    /* アカウント設定カード */
+    .settings-card {
+      border: 1px solid #ccc; border-radius: 6px; padding: 18px; margin-bottom: 16px;
+    }
+    .settings-card h3 { font-size: 0.95rem; margin-bottom: 12px; }
+    .settings-info { font-size: 0.82rem; line-height: 1.7; margin-bottom: 14px; background: #f7f7f7; padding: 10px; border-radius: 4px; }
+    .btn-save { background-color: #5cb85c; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; }
+    .btn-logout { background-color: #d9534f; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; margin-top: 10px; }
 
     .section-label { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; }
     .tool-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
@@ -199,10 +217,11 @@
 </head>
 <body>
 
+  <!-- ヘッダー -->
   <header>
     <h1 onclick="showPage('home')" data-i18n="siteTitle">無限ツール</h1>
     <div class="header-right">
-      <div class="user-badge">
+      <div class="user-badge" onclick="handleHeaderUserClick()">
         <span id="header-rank-avatar" class="rank-avatar rank-normal">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
         </span>
@@ -212,44 +231,35 @@
   </header>
 
   <main>
+    <!-- 1. トップ画面 -->
     <div id="page-home" class="page active">
       <div id="home-guest-hero" class="hero-box">
         <p data-i18n="heroText">すべての機能が、ここに。<br>今すぐサインアップしよう</p>
         <div class="hero-buttons">
-          <button class="btn-login" onclick="showPage('login')" data-i18n="loginBtn">ログイン</button>
-          <button class="btn-signup" onclick="showPage('signup')" data-i18n="signupBtn">アカウント作成</button>
-        </div>
-      </div>
 
-      <div id="home-user-rec" style="display:none;">
-        <span class="recommend-badge" data-i18n="recBadge">あなたにおすすめ</span>
-        <div class="recommend-empty">
-          <p data-i18n="recEmptyText">まだあなたのおすすめはありません<br>ツールを使ってみましょう！</p>
-          <a onclick="showPage('tools')" data-i18n="toolListLink">ツール一覧</a>
-        </div>
-      </div>
+ログイン
+アカウント作成
 
-      <span class="notice-badge" data-i18n="noticeBadge">お知らせ</span>
+あなたにおすすめ
 
-      <div class="notice-card">
-        <div class="notice-header">
-          <span class="notice-title" data-i18n="notice1Title">サイト開設のお知らせ</span>
-          <div class="notice-meta">
-            <div>2026/11/18</div>
-            <span class="new-tag">NEW</span>
-          </div>
-        </div>
-        <div class="notice-body" data-i18n="notice1Body">ご利用ありがとうございます。2026年11月18日よりこのサイ...</div>
-      </div>
+まだあなたのおすすめはありません
+ツールを使ってみましょう！
+ツール一覧
 
-      <div class="notice-card">
-        <div class="notice-header">
-          <span class="notice-title" data-i18n="notice2Title">メンテナンスのお知らせ</span>
-          <div class="notice-meta">
-            <div>2026/11/18</div>
-            <span class="new-tag">NEW</span>
-          </div>
-        </div>
+
+お知らせ
+サイト開設のお知らせ
+
+2026/11/18
+NEW
+
+
+ご利用ありがとうございます。2026年11月18日よりこのサイ...
+メンテナンスのお知らせ
+
+2026/11/18
+NEW
+
 
 ご利用ありがとうございます。2026年12月1日12時よりメン...
 
@@ -261,6 +271,8 @@
 アカウント作成はこちら
 ログイン
 
+パスワードを紛失しましたか？
+
 
 
 アカウント作成
@@ -273,6 +285,28 @@
 
 
 
+
+パスワード復旧
+
+ユーザー名
+
+メールアドレス
+ログイン
+送信
+
+
+6桁の認証コード
+戻る
+ログイン
+
+アカウント設定
+
+
+復旧用メールアドレス（任意）
+メールアドレスを保存
+
+
+ログアウト
 ツール一覧
 
 ツール名	ツールURL
@@ -297,10 +331,18 @@ English
 中文
 
 
+// ==========================================
+// Supabase 接続設定（ご自身のキーに書き換えてください）
+// ==========================================
 const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentLang = 'ja';
 let currentRank = 'guest';
+let currentUser = null;
+let currentProfile = null;
+let loginFailCount = 0;
+let recoveryEmailCache = '';
 const rankOrder = { guest: 0, normal: 1, bronze: 2, silver: 3, gold: 4, platinum: 5 };
 const toolsData = [
 { id: 'stopwatch', req: 'guest', page: 'stopwatch', ja: 'ストップウォッチ', en: 'stopwatch', zh: '秒表' },
@@ -339,10 +381,20 @@ notice2Title: 'メンテナンスのお知らせ',
 notice2Body: 'ご利用ありがとうございます。2026年12月1日12時よりメン...',
 loginTitle: 'ログイン',
 signupTitle: 'アカウント作成',
+forgotTitle: 'パスワード復旧',
 usernameLabel: 'ユーザー名',
 passwordLabel: 'パスワード',
+emailLabel: 'メールアドレス',
+otpCodeLabel: '6桁の認証コード',
 toSignup: 'アカウント作成はこちら',
 toLogin: 'ログイン',
+forgotLinkText: 'パスワードを紛失しましたか？',
+sendCodeBtn: '送信',
+backBtn: '戻る',
+accountSettingsTitle: 'アカウント設定',
+recoveryEmailLabel: '復旧用メールアドレス（任意）',
+saveEmailBtn: 'メールアドレスを保存',
+logoutBtn: 'ログアウト',
 toolListTitle: 'ツール一覧',
 colToolName: 'ツール名',
 colToolUrl: 'ツールURL',
@@ -373,10 +425,20 @@ notice2Title: 'Notice of maintenance',
 notice2Body: 'Thank you for using it. Maintenance from 12:00 on Decem...',
 loginTitle: 'log in',
 signupTitle: 'Create an account',
+forgotTitle: 'Password recovery',
 usernameLabel: 'username',
 passwordLabel: 'password',
+emailLabel: 'Email address',
+otpCodeLabel: '6-digit code',
 toSignup: 'Create an account',
 toLogin: 'log in',
+forgotLinkText: 'Did you lose your password?',
+sendCodeBtn: 'Send',
+backBtn: 'Back',
+accountSettingsTitle: 'Account settings',
+recoveryEmailLabel: 'Recovery email (optional)',
+saveEmailBtn: 'Save email',
+logoutBtn: 'Log out',
 toolListTitle: 'List of tools',
 colToolName: 'Tool name',
 colToolUrl: 'Tool URL',
@@ -407,10 +469,20 @@ notice2Title: '维护通知',
 notice2Body: '感谢您的使用。2026年12月1日12点开始进行维护，维护期...',
 loginTitle: '登录',
 signupTitle: '创建账户',
+forgotTitle: '找回密码',
 usernameLabel: '用户名',
 passwordLabel: '密码',
+emailLabel: '邮箱地址',
+otpCodeLabel: '6位验证码',
 toSignup: '创建账户',
 toLogin: '登录',
+forgotLinkText: '忘记密码了吗？',
+sendCodeBtn: '发送',
+backBtn: '返回',
+accountSettingsTitle: '账户设置',
+recoveryEmailLabel: '备用邮箱（可选）',
+saveEmailBtn: '保存邮箱',
+logoutBtn: '退出登录',
 toolListTitle: '工具一览',
 colToolName: '工具名称',
 colToolUrl: '工具URL',
@@ -432,6 +504,315 @@ ja: ルール・概要 1.コメント 以下のコメントは禁止します。
 en: 1. Comment The following comments are prohibited. I will delete it as soon as I find it. ・Advertisement ・Spam ・Harassment 2. About use If you create an account, you can use the recommended functions. The functions of some tools will be lifted. Also, New release of the tool (if the rank is gold or higher) and You will be able to post comments. If you forget your account password, in the registration email It can be restored, but if you can't receive emails It cannot be restored. If you forget your username, we will not be able to respond. If the account commits annoying behavior or violation of rules more than once It may be deleted. 3. Account The account is initially "normal", and if you meet the conditions I will rank up. ○Bronze ○Conditions ・Use the tool 10 times ・Access (login) 5 times ○What you can do ・Use of tools ・Comment posting ・Banned on some tool functions ○Silver ○Conditions ・Use the tool 30 times ・Access 20 times ・Continuous access for 3 days ・More than 15 days have passed since registration ○What you can do ・Use of tools ・Comment posting ・Releasing some tools ・Create a new tool ・Banned on some tool functions ○Gold ○Conditions ・Using tools 80 times ・Access 50 times ・Continuous access for 1 week ・More than 1 month has passed since registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Banned on some tool functions ○Platinum ○Conditions ・Use the tool 150 times ・Access 100 times ・Continuous access for 2 weeks ・Add more than 3 months from registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Ban lifted on all tool functions 4. Other The administrator is Sp-25789 (https://mit.edu) It is. Site maintenance is basically carried out without notice. There are three supported languages: Japanese, English, and Chinese (plain language, simplified Chinese). English and Chinese are translated, so some of them are unnatural. There is a part. Please understand.,
 zh: 规则・概要 1.评论 禁止以下评论，发现后会立即删除。 ・广告 ・垃圾邮件 ・骚扰 2.关于使用 创建账户后可以使用推荐功能， 部分工具的限制将被解除。另外， 工具的新公开（等级在黄金以上的情况下）和 可以发表评论了。 如果忘记账户密码，可以通过注册邮件 恢复，但如果收不到邮件的话 无法恢复。 忘记用户名时无法处理。 账户如果多次有扰民行为或违反规则的行为 可能会被删除。 3.账户 账户一开始是“正常”，满足条件后 升级。 ○青铜 ○条件 ・使用工具 10次 ・访问（登录） 5次 ○能做的事情 ・工具使用 ・评论投稿 ・工具部分功能解禁 ○银色 ○条件 ・使用工具 30次 ・访问 20次 ・连续访问 3天 ・注册已过 15天 ○能做的事情 ・工具使用 ・评论投稿 ・部分工具解放 ・制作新工具 ・工具部分功能解禁 ○黄金 ○条件 ・使用工具 80次 ・访问 50次 ・连续访问 1周 ・从注册开始已经过了 1个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具部分功能解禁 ○白金 ○条件 ・使用工具 150次 ・访问 100次 ・连续访问 2周 ・注册已满 3个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具全部功能解禁 4.其他 管理员是Sp-25789 (https://mit.edu) 是。网站维护基本上不事先通知。 对应语言有日语、英语、中文（普通话、简体字）这3种。 因为英语、中文使用了翻译，所以有一部分不自然 有一部分。请谅解。
 };
+// ==========================================
+// ユーザー名から内部認証用ダミーメール生成
+// ==========================================
+function toInternalEmail(username) {
+const hex = Array.from(new TextEncoder().encode(username.trim()))
+.map(b => b.toString(16).padStart(2, '0')).join('');
+return u_${hex}@user.infinitetools.local;
+}
+// ==========================================
+// 新規登録（ユーザー名＋パスワード）
+// ==========================================
+async function handleSignup() {
+const username = document.getElementById('signup-username').value.trim();
+const password = document.getElementById('signup-password').value;
+const msgEl = document.getElementById('signup-msg');
+msgEl.textContent = '';
+if (!username || !password) {
+msgEl.textContent = 'ユーザー名とパスワードを入力してください。';
+return;
+}
+if (password.length < 6) {
+msgEl.textContent = 'パスワードは6文字以上にしてください。';
+return;
+}
+const { data, error } = await sb.auth.signUp({
+email: toInternalEmail(username),
+password: password,
+options: { data: { username: username } }
+});
+if (error) {
+msgEl.textContent = 'エラー: ' + error.message;
+return;
+}
+if (data.user) {
+await loadUserProfile(data.user, true);
+showPage('home');
+}
+}
+// ==========================================
+// ログイン（3回失敗で「パスワードを紛失しましたか？」表示）
+// ==========================================
+async function handleLogin() {
+const username = document.getElementById('login-username').value.trim();
+const password = document.getElementById('login-password').value;
+const msgEl = document.getElementById('login-msg');
+msgEl.textContent = '';
+if (!username || !password) {
+msgEl.textContent = 'ユーザー名とパスワードを入力してください。';
+return;
+}
+const { data, error } = await sb.auth.signInWithPassword({
+email: toInternalEmail(username),
+password: password
+});
+if (error) {
+loginFailCount++;
+msgEl.textContent = ログイン失敗 (${loginFailCount}回目);
+if (loginFailCount >= 3) {
+document.getElementById('forgot-link-area').style.display = 'block';
+}
+return;
+}
+loginFailCount = 0;
+document.getElementById('forgot-link-area').style.display = 'none';
+if (data.user) {
+await loadUserProfile(data.user, true);
+showPage('home');
+}
+}
+// ==========================================
+// パスワード紛失フロー（ユーザー名＆メール照合 → 6桁OTP送信 → 検証ログイン）
+// ==========================================
+function openForgotPage() {
+document.getElementById('forgot-step-1').style.display = 'block';
+document.getElementById('forgot-step-2').style.display = 'none';
+document.getElementById('forgot-msg').textContent = '';
+document.getElementById('forgot-username').value = document.getElementById('login-username').value || '';
+showPage('forgot');
+}
+async function sendRecoveryOtp() {
+const username = document.getElementById('forgot-username').value.trim();
+const email = document.getElementById('forgot-email').value.trim();
+const msgEl = document.getElementById('forgot-msg');
+msgEl.style.color = '#d9534f';
+msgEl.textContent = '';
+if (!username || !email) {
+msgEl.textContent = 'ユーザー名とメールアドレスを入力してください。';
+return;
+}
+// Supabase RPCでユーザー名とメールアドレスが一致するか確認
+const { data: isMatch, error: rpcError } = await sb.rpc('verify_user_email', {
+p_username: username,
+p_email: email
+});
+if (rpcError || !isMatch) {
+msgEl.textContent = 'ユーザー名またはメールアドレスが一致しません。';
+return;
+}
+// 一致した場合のみ6桁OTPメールを送信
+const { error: otpError } = await sb.auth.signInWithOtp({
+email: email,
+options: { shouldCreateUser: false }
+});
+if (otpError) {
+msgEl.textContent = '送信エラー: ' + otpError.message;
+return;
+}
+recoveryEmailCache = email;
+document.getElementById('forgot-step-1').style.display = 'none';
+document.getElementById('forgot-step-2').style.display = 'block';
+msgEl.style.color = '#2e8b57';
+msgEl.textContent = 'メールに6桁の認証コードを送信しました。';
+}
+async function verifyRecoveryOtp() {
+const token = document.getElementById('forgot-otp').value.trim();
+const msgEl = document.getElementById('forgot-msg');
+msgEl.style.color = '#d9534f';
+msgEl.textContent = '';
+if (token.length !== 6) {
+msgEl.textContent = '6桁の数字を入力してください。';
+return;
+}
+const { data, error } = await sb.auth.verifyOtp({
+email: recoveryEmailCache,
+token: token,
+type: 'email'
+});
+if (error) {
+msgEl.textContent = '認証コードが正しくありません。';
+return;
+}
+if (data.user) {
+await loadUserProfile(data.user, true);
+showPage('home');
+}
+}
+// ==========================================
+// プロフィール読込・アクセス更新・ランク自動昇格計算
+// ==========================================
+function evaluateRank(profile) {
+const daysSinceReg = Math.floor((Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24));
+if (profile.tool_uses >= 150 && profile.access_count >= 100 && profile.consecutive_days >= 14 && daysSinceReg >= 90) {
+return 'platinum';
+}
+if (profile.tool_uses >= 80 && profile.access_count >= 50 && profile.consecutive_days >= 7 && daysSinceReg >= 30) {
+return 'gold';
+}
+if (profile.tool_uses >= 30 && profile.access_count >= 20 && profile.consecutive_days >= 3 && daysSinceReg >= 15) {
+return 'silver';
+}
+if (profile.tool_uses >= 10 && profile.access_count >= 5) {
+return 'bronze';
+}
+return 'normal';
+}
+async function loadUserProfile(user, isNewAccess) {
+currentUser = user;
+const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+if (!profile) return;
+if (isNewAccess) {
+const todayStr = new Date().toISOString().split('T')[0];
+let newConsecutive = profile.consecutive_days;
+let newAccess = profile.access_count;
+if (profile.last_access_date !== todayStr) {
+const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+newConsecutive = (profile.last_access_date === yesterday) ? profile.consecutive_days + 1 : 1;
+newAccess += 1;
+}
+const updatedTemp = { ...profile, access_count: newAccess, consecutive_days: newConsecutive, last_access_date: todayStr };
+const newRank = evaluateRank(updatedTemp);
+const { data: updated } = await sb.from('profiles').update({
+access_count: newAccess,
+consecutive_days: newConsecutive,
+last_access_date: todayStr,
+rank: newRank
+}).eq('id', user.id).select().single();
+currentProfile = updated || updatedTemp;
+} else {
+currentProfile = profile;
+}
+applyUserUI();
+await loadRecommendations();
+}
+function applyUserUI() {
+if (!currentProfile) {
+currentRank = 'guest';
+document.getElementById('header-username').textContent = 'GitHub';
+document.getElementById('header-rank-avatar').className = 'rank-avatar rank-normal';
+document.getElementById('home-guest-hero').style.display = 'block';
+document.getElementById('home-user-rec').style.display = 'none';
+renderToolsTable();
+return;
+}
+currentRank = currentProfile.rank || 'normal';
+document.getElementById('header-username').textContent = currentProfile.username;
+document.getElementById('header-rank-avatar').className = 'rank-avatar rank-' + currentRank;
+document.getElementById('home-guest-hero').style.display = 'none';
+document.getElementById('home-user-rec').style.display = 'block';
+renderToolsTable();
+}
+// ==========================================
+// アカウント設定（復旧用メールアドレス登録・ログアウト）
+// ==========================================
+function handleHeaderUserClick() {
+if (!currentProfile) {
+showPage('login');
+return;
+}
+document.getElementById('setting-recovery-email').value = currentProfile.recovery_email || '';
+document.getElementById('setting-msg').textContent = '';
+document.getElementById('account-status-info').innerHTML =
+ユーザー名: <strong>${currentProfile.username}</strong><br> +
+ランク: <strong>${currentProfile.rank}</strong><br> +
+ツール利用: ${currentProfile.tool_uses}回 / アクセス: ${currentProfile.access_count}回 / 連続: ${currentProfile.consecutive_days}日;
+showPage('account');
+}
+async function saveRecoveryEmail() {
+if (!currentUser) return;
+const email = document.getElementById('setting-recovery-email').value.trim();
+const msgEl = document.getElementById('setting-msg');
+msgEl.style.color = '#d9534f';
+if (!email) {
+msgEl.textContent = 'メールアドレスを入力してください。';
+return;
+}
+// Supabase Auth側にもメールアドレスを紐付け（OTPログインできるようにする）
+const { error: authError } = await sb.auth.updateUser({ email: email });
+if (authError) {
+msgEl.textContent = 'エラー: ' + authError.message;
+return;
+}
+const { data: updated, error: dbError } = await sb.from('profiles')
+.update({ recovery_email: email })
+.eq('id', currentUser.id)
+.select().single();
+if (dbError) {
+msgEl.textContent = '保存エラー: ' + dbError.message;
+return;
+}
+currentProfile = updated;
+msgEl.style.color = '#2e8b57';
+msgEl.textContent = '復旧用メールアドレスを保存しました。';
+}
+async function handleLogout() {
+await sb.auth.signOut();
+currentUser = null;
+currentProfile = null;
+applyUserUI();
+showPage('home');
+}
+// ==========================================
+// ツール利用記録＆おすすめ機能
+// ==========================================
+async function recordToolUse(toolId) {
+if (!currentUser || !currentProfile) return;
+const newUses = currentProfile.tool_uses + 1;
+const newRank = evaluateRank({ ...currentProfile, tool_uses: newUses });
+const { data: updated } = await sb.from('profiles')
+.update({ tool_uses: newUses, rank: newRank })
+.eq('id', currentUser.id)
+.select().single();
+if (updated) {
+currentProfile = updated;
+applyUserUI();
+}
+const { data: existing } = await sb.from('tool_history')
+.select('*').eq('user_id', currentUser.id).eq('tool_id', toolId).single();
+if (existing) {
+await sb.from('tool_history')
+.update({ use_count: existing.use_count + 1, updated_at: new Date().toISOString() })
+.eq('id', existing.id);
+} else {
+await sb.from('tool_history').insert({ user_id: currentUser.id, tool_id: toolId, use_count: 1 });
+}
+await loadRecommendations();
+}
+async function loadRecommendations() {
+if (!currentUser) return;
+const { data: history } = await sb.from('tool_history')
+.select('*').eq('user_id', currentUser.id).order('use_count', { ascending: false }).limit(3);
+const emptyBox = document.getElementById('rec-empty-box');
+const listBox = document.getElementById('rec-list-box');
+if (!history || history.length === 0) {
+emptyBox.style.display = 'block';
+listBox.style.display = 'none';
+return;
+}
+emptyBox.style.display = 'none';
+listBox.style.display = 'flex';
+listBox.innerHTML = history.map(h => {
+const tool = toolsData.find(t => t.id === h.tool_id);
+if (!tool) return '';
+const label = tool[currentLang].replace(/\n/g, ' ');
+return <button class="rec-item-btn" onclick="openTool('${tool.id}')">${label}</button>;
+}).join('');
+}
+function openTool(toolId) {
+const tool = toolsData.find(t => t.id === toolId);
+if (!tool) return;
+recordToolUse(toolId);
+if (tool.page) {
+showPage(tool.page);
+} else if (tool.url && tool.url !== '#') {
+window.location.href = tool.url;
+}
+}
+// ==========================================
+// 画面遷移・言語切り替え・テーブル描画
+// ==========================================
 function showPage(pageId) {
 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 document.getElementById('page-' + pageId).classList.add('active');
@@ -463,18 +844,7 @@ updateSwButtonsUI(1);
 updateSwButtonsUI(2);
 renderToolsTable();
 renderRules();
-}
-function setUserRank(rank, username) {
-currentRank = rank;
-if (username) {
-document.getElementById('header-username').textContent = username;
-}
-const avatar = document.getElementById('header-rank-avatar');
-avatar.className = 'rank-avatar rank-' + (rank === 'guest' ? 'normal' : rank);
-const isLoggedIn = rank !== 'guest';
-document.getElementById('home-guest-hero').style.display = isLoggedIn ? 'none' : 'block';
-document.getElementById('home-user-rec').style.display = isLoggedIn ? 'block' : 'none';
-renderToolsTable();
+loadRecommendations();
 }
 function renderToolsTable() {
 const tbody = document.getElementById('tool-table-body');
@@ -488,11 +858,8 @@ tdName.innerHTML = tool[currentLang].replace(/\n/g, '
 const tdUrl = document.createElement('td');
 const reqLevel = rankOrder[tool.req];
 if (userLevel >= reqLevel) {
-if (tool.page) {
-tdUrl.innerHTML = <span class="tool-link" onclick="showPage('${tool.page}')">${reqLabels[currentLang].open}</span>;
-} else {
-tdUrl.innerHTML = <a class="tool-link" href="${tool.url}">URL</a>;
-}
+const text = tool.page ? reqLabels[currentLang].open : 'URL';
+tdUrl.innerHTML = <span class="tool-link" onclick="openTool('${tool.id}')">${text}</span>;
 } else if (currentRank === 'guest') {
 tdUrl.innerHTML = <span class="tool-locked">${reqLabels[currentLang].unavailable}</span>;
 } else {
@@ -506,6 +873,9 @@ tbody.appendChild(tr);
 function renderRules() {
 document.getElementById('rules-text-container').textContent = rulesText[currentLang];
 }
+// ==========================================
+// ストップウォッチ＆対局時計ロジック
+// ==========================================
 const timers = {
 1: { running: false, startTime: 0, elapsed: 0, interval: null },
 2: { running: false, startTime: 0, elapsed: 0, interval: null }
@@ -591,12 +961,12 @@ return;
 }
 tbody.innerHTML = laps.map((time, idx) => <tr><td>${laps.length - idx}</td><td>${time}</td></tr>).join('');
 }
-function handleAuth(type) {
-const user = document.getElementById(type === 'login' ? 'login-username' : 'signup-username').value;
-if (user) {
-setUserRank('normal', user);
-showPage('home');
-}
-}
+// 初期化＆既存セッション確認
+(async function init() {
 renderToolsTable();
 renderRules();
+const { data: { session } } = await sb.auth.getSession();
+if (session && session.user) {
+await loadUserProfile(session.user, false);
+}
+})();
