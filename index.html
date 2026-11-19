@@ -1,0 +1,602 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>無限ツール / infinite tools / 无限工具</title>
+  <script src="https://jsdelivr.net"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #ffffff; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+
+    header {
+      background-color: #5cb85c;
+      color: white;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+    .header-right { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+    .user-badge { display: flex; align-items: center; gap: 6px; }
+    .rank-avatar {
+      width: 20px; height: 20px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background-color: #ffffff;
+    }
+    .rank-avatar svg { width: 14px; height: 14px; }
+    .rank-normal svg { fill: #ffffff; stroke: #888; stroke-width: 1.5; }
+    .rank-bronze svg { fill: #cd7f32; }
+    .rank-silver svg { fill: #a6a6a6; }
+    .rank-gold svg { fill: #ffd700; }
+    .rank-platinum svg { fill: #4dd2ff; }
+
+    main { flex: 1; padding: 20px 16px; max-width: 600px; width: 100%; margin: 0 auto; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .hero-box {
+      background-color: #4db8ff;
+      color: white;
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .hero-box p { font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px; }
+    .hero-buttons { display: flex; gap: 15px; justify-content: center; }
+    .btn-login { background-color: #1a75ff; color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    .btn-signup { background-color: #ffb84d; color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    .recommend-badge {
+      display: inline-block;
+      background-color: #80d4ff;
+      color: white;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 3px;
+      margin-bottom: 15px;
+    }
+    .recommend-empty { text-align: center; font-size: 0.9rem; line-height: 1.6; margin: 15px 0 25px; }
+    .recommend-empty a { color: #1a75ff; text-decoration: underline; cursor: pointer; }
+
+    .notice-badge {
+      display: inline-block;
+      background-color: #5c5cd6;
+      color: white;
+      font-size: 0.8rem;
+      padding: 4px 16px;
+      border-radius: 3px;
+      margin-bottom: 10px;
+    }
+    .notice-card {
+      background-color: #e6e6e6;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .notice-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .notice-title { font-weight: bold; font-size: 0.9rem; }
+    .notice-meta { text-align: right; font-size: 0.7rem; color: #666; }
+    .new-tag { background-color: #ff4d4d; color: white; padding: 1px 6px; border-radius: 2px; font-weight: bold; display: inline-block; margin-top: 2px; }
+    .notice-body { font-size: 0.8rem; color: #444; }
+
+    .auth-bg {
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 50%, #e0c3fc 100%);
+      padding: 24px 16px;
+      border-radius: 8px;
+      width: 100%;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (orientation: landscape) {
+      .auth-bg { min-height: 45vh; }
+      .auth-box { max-width: 420px; }
+    }
+    .auth-box {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 25px 20px;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 340px;
+    }
+    .auth-box h2 { text-align: center; font-size: 1.1rem; margin-bottom: 18px; }
+    .form-row { margin-bottom: 14px; }
+    .form-row label { display: block; font-size: 0.8rem; margin-bottom: 4px; }
+    .form-row input { width: 100%; padding: 8px; border: none; background-color: #d9d9d9; border-radius: 3px; }
+    .auth-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+    .auth-switch { font-size: 0.7rem; color: #1a75ff; cursor: pointer; text-decoration: underline; }
+    .btn-auth-submit { background-color: #e6e68a; border: none; padding: 6px 16px; border-radius: 3px; font-size: 0.8rem; cursor: pointer; }
+
+    .section-label { font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; }
+    .tool-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
+    .tool-table th, .tool-table td { border: 1px solid #333; padding: 8px; text-align: center; }
+    .tool-table th { background-color: #fff; font-weight: bold; }
+    .tool-link { color: #1a75ff; text-decoration: underline; cursor: pointer; }
+    .tool-locked { color: #333; }
+
+    .sw-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 22px 10px;
+    }
+    .sw-circle-btn {
+      width: 54px; height: 54px; border-radius: 50%; border: none;
+      font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .btn-gray { background-color: #cccccc; color: #333; }
+    .btn-green { background-color: #70db70; color: #333; }
+    .btn-red { background-color: #ff4d4d; color: white; }
+    .sw-time { font-size: 2.3rem; font-variant-numeric: tabular-nums; }
+
+    .chess-toggle-row { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 12px; font-size: 0.85rem; }
+    .rect-switch { position: relative; display: inline-block; width: 46px; height: 26px; cursor: pointer; }
+    .rect-switch input { opacity: 0; width: 0; height: 0; }
+    .rect-slider {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #b3b3b3; border-radius: 4px; transition: .25s;
+    }
+    .rect-slider:before {
+      position: absolute; content: "";
+      height: 18px; width: 18px; left: 4px; bottom: 4px;
+      background-color: #ffffff; border-radius: 2px; transition: .25s;
+    }
+    .rect-switch input:checked + .rect-slider { background-color: #5cb85c; }
+    .rect-switch input:checked + .rect-slider:before { transform: translateX(20px); }
+
+    .rules-content { font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; }
+
+    footer {
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      font-size: 0.85rem;
+      margin-top: auto;
+      position: relative;
+    }
+    footer a { color: #1a75ff; text-decoration: underline; cursor: pointer; }
+
+    .lang-picker-wrapper { position: relative; display: inline-block; }
+    .lang-trigger {
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .lang-trigger:active { background-color: #eee; }
+    .lang-popup-menu {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      margin-bottom: 6px;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 130px;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .lang-popup-menu.open { display: block; }
+    .lang-option {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: left;
+    }
+    .lang-option:last-child { border-bottom: none; }
+    .lang-option:hover, .lang-option:active { background-color: #f2f8ff; }
+    .lang-option.selected { font-weight: bold; color: #1a75ff; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 onclick="showPage('home')" data-i18n="siteTitle">無限ツール</h1>
+    <div class="header-right">
+      <div class="user-badge">
+        <span id="header-rank-avatar" class="rank-avatar rank-normal">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        </span>
+        <span id="header-username">GitHub</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="page-home" class="page active">
+      <div id="home-guest-hero" class="hero-box">
+        <p data-i18n="heroText">すべての機能が、ここに。<br>今すぐサインアップしよう</p>
+        <div class="hero-buttons">
+          <button class="btn-login" onclick="showPage('login')" data-i18n="loginBtn">ログイン</button>
+          <button class="btn-signup" onclick="showPage('signup')" data-i18n="signupBtn">アカウント作成</button>
+        </div>
+      </div>
+
+      <div id="home-user-rec" style="display:none;">
+        <span class="recommend-badge" data-i18n="recBadge">あなたにおすすめ</span>
+        <div class="recommend-empty">
+          <p data-i18n="recEmptyText">まだあなたのおすすめはありません<br>ツールを使ってみましょう！</p>
+          <a onclick="showPage('tools')" data-i18n="toolListLink">ツール一覧</a>
+        </div>
+      </div>
+
+      <span class="notice-badge" data-i18n="noticeBadge">お知らせ</span>
+
+      <div class="notice-card">
+        <div class="notice-header">
+          <span class="notice-title" data-i18n="notice1Title">サイト開設のお知らせ</span>
+          <div class="notice-meta">
+            <div>2026/11/18</div>
+            <span class="new-tag">NEW</span>
+          </div>
+        </div>
+        <div class="notice-body" data-i18n="notice1Body">ご利用ありがとうございます。2026年11月18日よりこのサイ...</div>
+      </div>
+
+      <div class="notice-card">
+        <div class="notice-header">
+          <span class="notice-title" data-i18n="notice2Title">メンテナンスのお知らせ</span>
+          <div class="notice-meta">
+            <div>2026/11/18</div>
+            <span class="new-tag">NEW</span>
+          </div>
+        </div>
+
+ご利用ありがとうございます。2026年12月1日12時よりメン...
+
+ログイン
+
+ユーザー名
+
+パスワード
+アカウント作成はこちら
+ログイン
+
+
+
+アカウント作成
+
+ユーザー名
+
+パスワード
+ログイン
+アカウント作成
+
+
+
+ツール一覧
+
+ツール名	ツールURL
+ストップウォッチ
+リセット
+0:00.00
+開始
+リセット
+0:00.00
+開始
+対局時計(チェスクロック)
+
+
+ラップ	タイム
+1	0:00.00
+ルール・概要
+ツール一覧
+🌐 日本語 ▼
+
+日本語
+English
+中文
+
+
+const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+let currentLang = 'ja';
+let currentRank = 'guest';
+const rankOrder = { guest: 0, normal: 1, bronze: 2, silver: 3, gold: 4, platinum: 5 };
+const toolsData = [
+{ id: 'stopwatch', req: 'guest', page: 'stopwatch', ja: 'ストップウォッチ', en: 'stopwatch', zh: '秒表' },
+{ id: 'search', req: 'bronze', url: '#', ja: '検索エンジン', en: 'search engine', zh: '搜索引擎' },
+{ id: 'translate', req: 'guest', url: '#', ja: '翻訳', en: 'Translation', zh: '翻译' },
+{ id: 'encrypt', req: 'guest', url: '#', ja: '暗号化・テキスト\n変換', en: 'Encryption and\ntextConversion', zh: '加密、文本转换' },
+{ id: 'webserver', req: 'silver', url: '#', ja: 'ウェブサーバー\n作成', en: 'web server\nCreate', zh: '网络服务器制作' },
+{ id: 'chat', req: 'guest', url: '#', ja: 'チャット', en: 'chat', zh: '聊天' },
+{ id: 'video', req: 'bronze', url: '#', ja: '動画共有サイト', en: 'Video sharing site', zh: '视频共享网站' },
+{ id: 'sns', req: 'guest', url: '#', ja: 'SNS', en: 'SNS', zh: '社交网站' },
+{ id: 'scoring', req: 'silver', url: '#', ja: '自動採点AI', en: 'Automatic scoring\nAI', zh: '自动评分AI' },
+{ id: 'genai', req: 'gold', url: '#', ja: '生成AI', en: 'Generation AI', zh: '生成AI' },
+{ id: 'learning', req: 'guest', url: '#', ja: '学習サイト', en: 'Learning site', zh: '学习网站' },
+{ id: 'ip', req: 'bronze', url: '#', ja: 'IPアドレス検索', en: 'IP address search', zh: 'IP地址搜索' },
+{ id: 'roulette', req: 'guest', url: '#', ja: 'ルーレット', en: 'Roulette', zh: '轮盘赌' },
+{ id: 'sitecreate', req: 'guest', url: '#', ja: 'サイト作成', en: 'Site creation', zh: '网站制作' }
+];
+const reqLabels = {
+ja: { unavailable: '利用不可', bronze: 'ブロンズ以上', silver: 'シルバー以上', gold: 'ゴールド以上', open: '開く' },
+en: { unavailable: 'Not available', bronze: 'Bronze or more', silver: 'Silver or more', gold: 'Gold or more', open: 'Open' },
+zh: { unavailable: '不能使用', bronze: '青铜以上', silver: '银色以上', gold: '黄金以上', open: '打开' }
+};
+const i18n = {
+ja: {
+siteTitle: '無限ツール',
+heroText: 'すべての機能が、ここに。\n今すぐサインアップしよう',
+loginBtn: 'ログイン',
+signupBtn: 'アカウント作成',
+recBadge: 'あなたにおすすめ',
+recEmptyText: 'まだあなたのおすすめはありません\nツールを使ってみましょう！',
+toolListLink: 'ツール一覧',
+noticeBadge: 'お知らせ',
+notice1Title: 'サイト開設のお知らせ',
+notice1Body: 'ご利用ありがとうございます。2026年11月18日よりこのサイ...',
+notice2Title: 'メンテナンスのお知らせ',
+notice2Body: 'ご利用ありがとうございます。2026年12月1日12時よりメン...',
+loginTitle: 'ログイン',
+signupTitle: 'アカウント作成',
+usernameLabel: 'ユーザー名',
+passwordLabel: 'パスワード',
+toSignup: 'アカウント作成はこちら',
+toLogin: 'ログイン',
+toolListTitle: 'ツール一覧',
+colToolName: 'ツール名',
+colToolUrl: 'ツールURL',
+swTitle: 'ストップウォッチ',
+swReset: 'リセット',
+swLap: 'ラップ',
+swStart: '開始',
+swStop: '停止',
+chessLabel: '対局時計(チェスクロック)',
+colLap: 'ラップ',
+colTime: 'タイム',
+footerRules: 'ルール・概要',
+footerTools: 'ツール一覧',
+langLabel: '🌐 日本語 ▼'
+},
+en: {
+siteTitle: 'infinite tools',
+heroText: 'All functions are here.\nSign up now',
+loginBtn: 'log in',
+signupBtn: 'Create an account',
+recBadge: 'Recommended for you',
+recEmptyText: "I don't have your recommendation yet\nLet's use the tool!",
+toolListLink: 'List of tools',
+noticeBadge: 'notice',
+notice1Title: 'Notice of site opening',
+notice1Body: 'Thank you for using it. From November 18, 2026, this site...',
+notice2Title: 'Notice of maintenance',
+notice2Body: 'Thank you for using it. Maintenance from 12:00 on Decem...',
+loginTitle: 'log in',
+signupTitle: 'Create an account',
+usernameLabel: 'username',
+passwordLabel: 'password',
+toSignup: 'Create an account',
+toLogin: 'log in',
+toolListTitle: 'List of tools',
+colToolName: 'Tool name',
+colToolUrl: 'Tool URL',
+swTitle: 'stopwatch',
+swReset: 'Reset',
+swLap: 'Rap',
+swStart: 'start',
+swStop: 'stop',
+chessLabel: 'Game clock (chess clock)',
+colLap: 'Rap',
+colTime: 'Time',
+footerRules: 'rule・summary',
+footerTools: 'list of tools',
+langLabel: '🌐 English ▼'
+},
+zh: {
+siteTitle: '无限工具',
+heroText: '所有功能都在这里。\n现在马上注册吧',
+loginBtn: '登录',
+signupBtn: '创建账户',
+recBadge: '推荐给你',
+recEmptyText: '还没有你的推荐\n试试工具吧！',
+toolListLink: '工具一览',
+noticeBadge: '通知',
+notice1Title: '网站开通通知',
+notice1Body: '感谢您的使用。从2026年11月18日开始这个网站，网站...',
+notice2Title: '维护通知',
+notice2Body: '感谢您的使用。2026年12月1日12点开始进行维护，维护期...',
+loginTitle: '登录',
+signupTitle: '创建账户',
+usernameLabel: '用户名',
+passwordLabel: '密码',
+toSignup: '创建账户',
+toLogin: '登录',
+toolListTitle: '工具一览',
+colToolName: '工具名称',
+colToolUrl: '工具URL',
+swTitle: '秒表',
+swReset: '重置',
+swLap: '说唱',
+swStart: '开始',
+swStop: '停止',
+chessLabel: '对局时钟 (国际象棋时钟)',
+colLap: '说唱',
+colTime: '时间',
+footerRules: '规则・概要',
+footerTools: '工具一览',
+langLabel: '🌐 中文 ▼'
+}
+};
+const rulesText = {
+ja: ルール・概要 1.コメント 以下のコメントは禁止します。発見次第削除します。 ・広告 ・スパム ・嫌がらせ 2.利用について アカウントを作成するとおすすめ機能を使用できたり 一部ツールの制限を解除されます。また、 ツールの新規公開(ランクがゴールド以上の場合)や コメントの投稿ができるようになります。 アカウントのパスワードを忘れた場合は登録メールで 使用することができますが、メールを受け取れない場合 には復旧することができません。 ユーザー名を忘れた場合は対応いたしかねます。 アカウントは迷惑行為やルール違反を複数回すると 削除されることがあります。 3.アカウント アカウントは最初「ノーマル」となっていて、条件を満たすと ランクアップします。 ○ブロンズ ○条件 ・ツール利用 10回 ・アクセス(ログイン) 5回 ○できること ・ツール利用 ・コメント投稿 ・ツール一部制限解除 ○シルバー ○条件 ・ツール利用 30回 ・アクセス 20回 ・連続アクセス 3日間 ・登録から15日以上経過 ○できること ・ツール利用 ・コメント投稿 ・一部ツール解除 ・新規ツール作成 ・ツール一部制限解除 ○ゴールド ○条件 ・ツール利用 80回 ・アクセス 50回 ・連続アクセス 1週間 ・登録から1ヶ月以上経過 ○できること ・ツール利用 ・コメント投稿 ・全ツール解除 ・新規ツール作成・公開 ・ツール一部制限解除 ○プラチナ ○条件 ・ツール利用 150回 ・アクセス 100回 ・連続アクセス 2週間 ・登録から3ヶ月以上経過 ○できること ・ツール利用 ・コメント投稿 ・全ツール解除 ・新規ツール作成・公開 ・ツール全制限解除 4.その他 管理者はSp-25789(https://mit.edu) です。サイトメンテナンスは基本的に予告なしで行います。 対応言語は日本語・英語・中国語(普通話、簡体字)の3つです。 英語・中国語は翻訳を利用しておりますので、一部不自然な 部分があります。ご了承ください。,
+en: 1. Comment The following comments are prohibited. I will delete it as soon as I find it. ・Advertisement ・Spam ・Harassment 2. About use If you create an account, you can use the recommended functions. The functions of some tools will be lifted. Also, New release of the tool (if the rank is gold or higher) and You will be able to post comments. If you forget your account password, in the registration email It can be restored, but if you can't receive emails It cannot be restored. If you forget your username, we will not be able to respond. If the account commits annoying behavior or violation of rules more than once It may be deleted. 3. Account The account is initially "normal", and if you meet the conditions I will rank up. ○Bronze ○Conditions ・Use the tool 10 times ・Access (login) 5 times ○What you can do ・Use of tools ・Comment posting ・Banned on some tool functions ○Silver ○Conditions ・Use the tool 30 times ・Access 20 times ・Continuous access for 3 days ・More than 15 days have passed since registration ○What you can do ・Use of tools ・Comment posting ・Releasing some tools ・Create a new tool ・Banned on some tool functions ○Gold ○Conditions ・Using tools 80 times ・Access 50 times ・Continuous access for 1 week ・More than 1 month has passed since registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Banned on some tool functions ○Platinum ○Conditions ・Use the tool 150 times ・Access 100 times ・Continuous access for 2 weeks ・Add more than 3 months from registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Ban lifted on all tool functions 4. Other The administrator is Sp-25789 (https://mit.edu) It is. Site maintenance is basically carried out without notice. There are three supported languages: Japanese, English, and Chinese (plain language, simplified Chinese). English and Chinese are translated, so some of them are unnatural. There is a part. Please understand.,
+zh: 规则・概要 1.评论 禁止以下评论，发现后会立即删除。 ・广告 ・垃圾邮件 ・骚扰 2.关于使用 创建账户后可以使用推荐功能， 部分工具的限制将被解除。另外， 工具的新公开（等级在黄金以上的情况下）和 可以发表评论了。 如果忘记账户密码，可以通过注册邮件 恢复，但如果收不到邮件的话 无法恢复。 忘记用户名时无法处理。 账户如果多次有扰民行为或违反规则的行为 可能会被删除。 3.账户 账户一开始是“正常”，满足条件后 升级。 ○青铜 ○条件 ・使用工具 10次 ・访问（登录） 5次 ○能做的事情 ・工具使用 ・评论投稿 ・工具部分功能解禁 ○银色 ○条件 ・使用工具 30次 ・访问 20次 ・连续访问 3天 ・注册已过 15天 ○能做的事情 ・工具使用 ・评论投稿 ・部分工具解放 ・制作新工具 ・工具部分功能解禁 ○黄金 ○条件 ・使用工具 80次 ・访问 50次 ・连续访问 1周 ・从注册开始已经过了 1个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具部分功能解禁 ○白金 ○条件 ・使用工具 150次 ・访问 100次 ・连续访问 2周 ・注册已满 3个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具全部功能解禁 4.其他 管理员是Sp-25789 (https://mit.edu) 是。网站维护基本上不事先通知。 对应语言有日语、英语、中文（普通话、简体字）这3种。 因为英语、中文使用了翻译，所以有一部分不自然 有一部分。请谅解。
+};
+function showPage(pageId) {
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.getElementById('page-' + pageId).classList.add('active');
+if (pageId === 'tools') renderToolsTable();
+if (pageId === 'rules') renderRules();
+}
+function toggleLangMenu(event) {
+event.stopPropagation();
+document.getElementById('lang-popup-menu').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+document.getElementById('lang-popup-menu').classList.remove('open');
+});
+function selectLang(lang) {
+currentLang = lang;
+document.getElementById('lang-trigger').textContent = i18n[lang].langLabel;
+document.querySelectorAll('.lang-option').forEach(opt => {
+opt.classList.toggle('selected', opt.getAttribute('data-lang') === lang);
+});
+document.getElementById('lang-popup-menu').classList.remove('open');
+document.querySelectorAll('[data-i18n]').forEach(el => {
+const key = el.getAttribute('data-i18n');
+if (i18n[lang][key]) {
+el.innerHTML = i18n[lang][key].replace(/\n/g, '
+');
+}
+});
+updateSwButtonsUI(1);
+updateSwButtonsUI(2);
+renderToolsTable();
+renderRules();
+}
+function setUserRank(rank, username) {
+currentRank = rank;
+if (username) {
+document.getElementById('header-username').textContent = username;
+}
+const avatar = document.getElementById('header-rank-avatar');
+avatar.className = 'rank-avatar rank-' + (rank === 'guest' ? 'normal' : rank);
+const isLoggedIn = rank !== 'guest';
+document.getElementById('home-guest-hero').style.display = isLoggedIn ? 'none' : 'block';
+document.getElementById('home-user-rec').style.display = isLoggedIn ? 'block' : 'none';
+renderToolsTable();
+}
+function renderToolsTable() {
+const tbody = document.getElementById('tool-table-body');
+tbody.innerHTML = '';
+const userLevel = rankOrder[currentRank];
+toolsData.forEach(tool => {
+const tr = document.createElement('tr');
+const tdName = document.createElement('td');
+tdName.innerHTML = tool[currentLang].replace(/\n/g, '
+');
+const tdUrl = document.createElement('td');
+const reqLevel = rankOrder[tool.req];
+if (userLevel >= reqLevel) {
+if (tool.page) {
+tdUrl.innerHTML = <span class="tool-link" onclick="showPage('${tool.page}')">${reqLabels[currentLang].open}</span>;
+} else {
+tdUrl.innerHTML = <a class="tool-link" href="${tool.url}">URL</a>;
+}
+} else if (currentRank === 'guest') {
+tdUrl.innerHTML = <span class="tool-locked">${reqLabels[currentLang].unavailable}</span>;
+} else {
+tdUrl.innerHTML = <span class="tool-locked">${reqLabels[currentLang][tool.req]}</span>;
+}
+tr.appendChild(tdName);
+tr.appendChild(tdUrl);
+tbody.appendChild(tr);
+});
+}
+function renderRules() {
+document.getElementById('rules-text-container').textContent = rulesText[currentLang];
+}
+const timers = {
+1: { running: false, startTime: 0, elapsed: 0, interval: null },
+2: { running: false, startTime: 0, elapsed: 0, interval: null }
+};
+let laps = [];
+function formatTime(ms) {
+const totalSec = Math.floor(ms / 1000);
+const min = Math.floor(totalSec / 60);
+const sec = String(totalSec % 60).padStart(2, '0');
+const centi = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+return ${min}:${sec}.${centi};
+}
+function startTimer(id) {
+const t = timers[id];
+if (t.running) return;
+t.running = true;
+t.startTime = Date.now() - t.elapsed;
+t.interval = setInterval(() => {
+t.elapsed = Date.now() - t.startTime;
+document.getElementById(sw${id}-time-display).textContent = formatTime(t.elapsed);
+}, 10);
+updateSwButtonsUI(id);
+}
+function stopTimer(id) {
+const t = timers[id];
+if (!t.running) return;
+t.running = false;
+clearInterval(t.interval);
+updateSwButtonsUI(id);
+}
+function handleSwRight(id) {
+const isChess = document.getElementById('chess-toggle').checked;
+const t = timers[id];
+if (!t.running) {
+if (isChess) {
+const otherId = id === 1 ? 2 : 1;
+stopTimer(otherId);
+}
+startTimer(id);
+} else {
+stopTimer(id);
+}
+}
+function handleSwLeft(id) {
+const t = timers[id];
+if (t.running) {
+laps.unshift(formatTime(t.elapsed));
+renderLaps();
+} else {
+t.elapsed = 0;
+document.getElementById(sw${id}-time-display).textContent = '0:00.00';
+if (id === 1) {
+laps = [];
+renderLaps();
+}
+}
+}
+function updateSwButtonsUI(id) {
+const t = timers[id];
+const leftBtn = document.getElementById(sw${id}-left-btn);
+const rightBtn = document.getElementById(sw${id}-right-btn);
+if (t.running) {
+leftBtn.textContent = i18n[currentLang].swLap;
+rightBtn.textContent = i18n[currentLang].swStop;
+rightBtn.className = 'sw-circle-btn btn-red';
+} else {
+leftBtn.textContent = i18n[currentLang].swReset;
+rightBtn.textContent = i18n[currentLang].swStart;
+rightBtn.className = 'sw-circle-btn btn-green';
+}
+}
+function toggleChessMode() {
+const isChess = document.getElementById('chess-toggle').checked;
+stopTimer(1);
+stopTimer(2);
+document.getElementById('sw2-row').style.display = isChess ? 'flex' : 'none';
+}
+function renderLaps() {
+const tbody = document.getElementById('lap-table-body');
+if (laps.length === 0) {
+tbody.innerHTML = '10:00.00';
+return;
+}
+tbody.innerHTML = laps.map((time, idx) => <tr><td>${laps.length - idx}</td><td>${time}</td></tr>).join('');
+}
+function handleAuth(type) {
+const user = document.getElementById(type === 'login' ? 'login-username' : 'signup-username').value;
+if (user) {
+setUserRank('normal', user);
+showPage('home');
+}
+}
+renderToolsTable();
+renderRules();
