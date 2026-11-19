@@ -120,7 +120,6 @@
     .forgot-link-area { margin-top: 12px; text-align: center; display: none; }
     .forgot-link-area a { font-size: 0.8rem; color: #1a75ff; text-decoration: underline; cursor: pointer; }
 
-    /* アカウント設定カード */
     .settings-card {
       border: 1px solid #ccc; border-radius: 6px; padding: 18px; margin-bottom: 16px;
     }
@@ -217,7 +216,6 @@
 </head>
 <body>
 
-  <!-- ヘッダー -->
   <header>
     <h1 onclick="showPage('home')" data-i18n="siteTitle">無限ツール</h1>
     <div class="header-right">
@@ -231,13 +229,12 @@
   </header>
 
   <main>
-    <!-- 1. トップ画面 -->
     <div id="page-home" class="page active">
       <div id="home-guest-hero" class="hero-box">
         <p data-i18n="heroText">すべての機能が、ここに。<br>今すぐサインアップしよう</p>
         <div class="hero-buttons">
+          <button class="btn-login" onclick="showPage('login')" data-i18n="loginBtn">ログイン</button>
 
-ログイン
 アカウント作成
 
 あなたにおすすめ
@@ -270,6 +267,8 @@ NEW
 パスワード
 アカウント作成はこちら
 ログイン
+
+
 
 パスワードを紛失しましたか？
 
@@ -331,11 +330,8 @@ English
 中文
 
 
-// ==========================================
-// Supabase 接続設定（ご自身のキーに書き換えてください）
-// ==========================================
-const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_1t8-2Ob1z5lOq1qrU7ASaA_Xavxz_Hq';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentLang = 'ja';
 let currentRank = 'guest';
@@ -504,17 +500,11 @@ ja: ルール・概要 1.コメント 以下のコメントは禁止します。
 en: 1. Comment The following comments are prohibited. I will delete it as soon as I find it. ・Advertisement ・Spam ・Harassment 2. About use If you create an account, you can use the recommended functions. The functions of some tools will be lifted. Also, New release of the tool (if the rank is gold or higher) and You will be able to post comments. If you forget your account password, in the registration email It can be restored, but if you can't receive emails It cannot be restored. If you forget your username, we will not be able to respond. If the account commits annoying behavior or violation of rules more than once It may be deleted. 3. Account The account is initially "normal", and if you meet the conditions I will rank up. ○Bronze ○Conditions ・Use the tool 10 times ・Access (login) 5 times ○What you can do ・Use of tools ・Comment posting ・Banned on some tool functions ○Silver ○Conditions ・Use the tool 30 times ・Access 20 times ・Continuous access for 3 days ・More than 15 days have passed since registration ○What you can do ・Use of tools ・Comment posting ・Releasing some tools ・Create a new tool ・Banned on some tool functions ○Gold ○Conditions ・Using tools 80 times ・Access 50 times ・Continuous access for 1 week ・More than 1 month has passed since registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Banned on some tool functions ○Platinum ○Conditions ・Use the tool 150 times ・Access 100 times ・Continuous access for 2 weeks ・Add more than 3 months from registration ○What you can do ・Use of tools ・Comment posting ・Free all tools ・Creation and publication of new tools ・Ban lifted on all tool functions 4. Other The administrator is Sp-25789 (https://mit.edu) It is. Site maintenance is basically carried out without notice. There are three supported languages: Japanese, English, and Chinese (plain language, simplified Chinese). English and Chinese are translated, so some of them are unnatural. There is a part. Please understand.,
 zh: 规则・概要 1.评论 禁止以下评论，发现后会立即删除。 ・广告 ・垃圾邮件 ・骚扰 2.关于使用 创建账户后可以使用推荐功能， 部分工具的限制将被解除。另外， 工具的新公开（等级在黄金以上的情况下）和 可以发表评论了。 如果忘记账户密码，可以通过注册邮件 恢复，但如果收不到邮件的话 无法恢复。 忘记用户名时无法处理。 账户如果多次有扰民行为或违反规则的行为 可能会被删除。 3.账户 账户一开始是“正常”，满足条件后 升级。 ○青铜 ○条件 ・使用工具 10次 ・访问（登录） 5次 ○能做的事情 ・工具使用 ・评论投稿 ・工具部分功能解禁 ○银色 ○条件 ・使用工具 30次 ・访问 20次 ・连续访问 3天 ・注册已过 15天 ○能做的事情 ・工具使用 ・评论投稿 ・部分工具解放 ・制作新工具 ・工具部分功能解禁 ○黄金 ○条件 ・使用工具 80次 ・访问 50次 ・连续访问 1周 ・从注册开始已经过了 1个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具部分功能解禁 ○白金 ○条件 ・使用工具 150次 ・访问 100次 ・连续访问 2周 ・注册已满 3个月以上 ○能做的事情 ・工具使用 ・评论投稿 ・全工具解放 ・新工具制作・公开 ・工具全部功能解禁 4.其他 管理员是Sp-25789 (https://mit.edu) 是。网站维护基本上不事先通知。 对应语言有日语、英语、中文（普通话、简体字）这3种。 因为英语、中文使用了翻译，所以有一部分不自然 有一部分。请谅解。
 };
-// ==========================================
-// ユーザー名から内部認証用ダミーメール生成
-// ==========================================
 function toInternalEmail(username) {
 const hex = Array.from(new TextEncoder().encode(username.trim()))
 .map(b => b.toString(16).padStart(2, '0')).join('');
 return u_${hex}@user.infinitetools.local;
 }
-// ==========================================
-// 新規登録（ユーザー名＋パスワード）
-// ==========================================
 async function handleSignup() {
 const username = document.getElementById('signup-username').value.trim();
 const password = document.getElementById('signup-password').value;
@@ -542,9 +532,6 @@ await loadUserProfile(data.user, true);
 showPage('home');
 }
 }
-// ==========================================
-// ログイン（3回失敗で「パスワードを紛失しましたか？」表示）
-// ==========================================
 async function handleLogin() {
 const username = document.getElementById('login-username').value.trim();
 const password = document.getElementById('login-password').value;
@@ -573,9 +560,6 @@ await loadUserProfile(data.user, true);
 showPage('home');
 }
 }
-// ==========================================
-// パスワード紛失フロー（ユーザー名＆メール照合 → 6桁OTP送信 → 検証ログイン）
-// ==========================================
 function openForgotPage() {
 document.getElementById('forgot-step-1').style.display = 'block';
 document.getElementById('forgot-step-2').style.display = 'none';
@@ -593,7 +577,6 @@ if (!username || !email) {
 msgEl.textContent = 'ユーザー名とメールアドレスを入力してください。';
 return;
 }
-// Supabase RPCでユーザー名とメールアドレスが一致するか確認
 const { data: isMatch, error: rpcError } = await sb.rpc('verify_user_email', {
 p_username: username,
 p_email: email
@@ -602,7 +585,6 @@ if (rpcError || !isMatch) {
 msgEl.textContent = 'ユーザー名またはメールアドレスが一致しません。';
 return;
 }
-// 一致した場合のみ6桁OTPメールを送信
 const { error: otpError } = await sb.auth.signInWithOtp({
 email: email,
 options: { shouldCreateUser: false }
@@ -640,9 +622,6 @@ await loadUserProfile(data.user, true);
 showPage('home');
 }
 }
-// ==========================================
-// プロフィール読込・アクセス更新・ランク自動昇格計算
-// ==========================================
 function evaluateRank(profile) {
 const daysSinceReg = Math.floor((Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24));
 if (profile.tool_uses >= 150 && profile.access_count >= 100 && profile.consecutive_days >= 14 && daysSinceReg >= 90) {
@@ -664,11 +643,11 @@ currentUser = user;
 const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
 if (!profile) return;
 if (isNewAccess) {
-const todayStr = new Date().toISOString().split('T')[0];
+const todayStr = new Date().toISOString().split('T');
 let newConsecutive = profile.consecutive_days;
 let newAccess = profile.access_count;
 if (profile.last_access_date !== todayStr) {
-const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+const yesterday = new Date(Date.now() - 86400000).toISOString().split('T');
 newConsecutive = (profile.last_access_date === yesterday) ? profile.consecutive_days + 1 : 1;
 newAccess += 1;
 }
@@ -704,9 +683,6 @@ document.getElementById('home-guest-hero').style.display = 'none';
 document.getElementById('home-user-rec').style.display = 'block';
 renderToolsTable();
 }
-// ==========================================
-// アカウント設定（復旧用メールアドレス登録・ログアウト）
-// ==========================================
 function handleHeaderUserClick() {
 if (!currentProfile) {
 showPage('login');
@@ -729,7 +705,6 @@ if (!email) {
 msgEl.textContent = 'メールアドレスを入力してください。';
 return;
 }
-// Supabase Auth側にもメールアドレスを紐付け（OTPログインできるようにする）
 const { error: authError } = await sb.auth.updateUser({ email: email });
 if (authError) {
 msgEl.textContent = 'エラー: ' + authError.message;
@@ -754,9 +729,6 @@ currentProfile = null;
 applyUserUI();
 showPage('home');
 }
-// ==========================================
-// ツール利用記録＆おすすめ機能
-// ==========================================
 async function recordToolUse(toolId) {
 if (!currentUser || !currentProfile) return;
 const newUses = currentProfile.tool_uses + 1;
@@ -810,9 +782,6 @@ showPage(tool.page);
 window.location.href = tool.url;
 }
 }
-// ==========================================
-// 画面遷移・言語切り替え・テーブル描画
-// ==========================================
 function showPage(pageId) {
 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 document.getElementById('page-' + pageId).classList.add('active');
@@ -873,9 +842,6 @@ tbody.appendChild(tr);
 function renderRules() {
 document.getElementById('rules-text-container').textContent = rulesText[currentLang];
 }
-// ==========================================
-// ストップウォッチ＆対局時計ロジック
-// ==========================================
 const timers = {
 1: { running: false, startTime: 0, elapsed: 0, interval: null },
 2: { running: false, startTime: 0, elapsed: 0, interval: null }
@@ -961,7 +927,6 @@ return;
 }
 tbody.innerHTML = laps.map((time, idx) => <tr><td>${laps.length - idx}</td><td>${time}</td></tr>).join('');
 }
-// 初期化＆既存セッション確認
 (async function init() {
 renderToolsTable();
 renderRules();
