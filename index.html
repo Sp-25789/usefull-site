@@ -257,15 +257,32 @@
       el.textContent = message || '';
       if (color) el.style.color = color;
     }
-    function showPage(pageId) {
+    function showPage(pageId, pushHistory = true) {
       const page = document.getElementById('page-' + pageId);
       if (!page) return;
+      if (document.querySelector('.page.active')?.id === 'page-' + pageId) {
+        if (pushHistory) {
+          const currentHash = location.hash.replace(/^#/, '');
+          if (currentHash !== pageId) history.pushState({ page: pageId }, '', '#' + pageId);
+        }
+        return;
+      }
       document.querySelectorAll('.page').forEach((el) => el.classList.remove('active'));
       page.classList.add('active');
       if (pageId === 'tools') renderToolsTable();
       if (pageId === 'rules') renderRules();
+      if (pushHistory) {
+        const currentHash = location.hash.replace(/^#/, '');
+        if (currentHash !== pageId) history.pushState({ page: pageId }, '', '#' + pageId);
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    window.addEventListener('popstate', (event) => {
+      const statePage = event.state?.page;
+      const hashPage = location.hash.replace(/^#/, '');
+      const targetPage = statePage || hashPage || 'home';
+      showPage(targetPage, false);
+    });
     function evaluateRank(profile) {
       const age = Math.max(0, Math.floor((Date.now() - new Date(profile.created_at).getTime()) / 86400000));
       const uses = Number(profile.tool_uses) || 0;
@@ -337,7 +354,7 @@
       const password = document.getElementById('signup-password').value;
       setMessage('signup-msg', '');
       if (!username || !password) return setMessage('signup-msg', 'ユーザー名とパスワードを入力してください。');
-      if (password.length < 6) return setMessage('signup-msg', 'パスワードは6文字以上にしてください。');
+      if (password.length < 6) return setMessage('signup-msg', 'パスワードは6文字以上にして��ださい。');
       try {
         const { data, error } = await client.auth.signUp({ email:toInternalEmail(username), password, options:{ data:{ username } } });
         if (error) throw error;
@@ -387,7 +404,7 @@
       if (!client) return setMessage('forgot-msg', 'Supabase SDKを読み込めませんでした。');
       const username = document.getElementById('forgot-username').value.trim();
       const email = document.getElementById('forgot-email').value.trim();
-      msg = document.getElementById('forgot-msg');
+      const msg = document.getElementById('forgot-msg');
       msg.style.color = '#d9534f';
       setMessage('forgot-msg', '');
       if (!username || !email) return setMessage('forgot-msg', 'ユーザー名とメールアドレスを入力してください。');
@@ -637,6 +654,10 @@
       }
     });
     window.addEventListener('DOMContentLoaded', async () => {
+      const hashPage = location.hash.replace(/^#/, '');
+      const validPage = hashPage && document.getElementById('page-' + hashPage) ? hashPage : 'home';
+      showPage(validPage, false);
+      history.replaceState({ page: validPage }, '', '#' + validPage);
       renderToolsTable(); renderRules(); renderLaps(); updateSwButtonsUI(1); updateSwButtonsUI(2); applyUserUI();
       const client = getSb();
       if (!client) { console.error('Supabase SDK could not be loaded.'); return; }
