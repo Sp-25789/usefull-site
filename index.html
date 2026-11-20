@@ -11,8 +11,8 @@
     button, input { font: inherit; }
     header { background: #5cb85c; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
     header h1 { font-size: 1.1rem; margin: 0; cursor: pointer; }
-    .header-right, .user-badge { display: flex; align-items: center; gap: 8px; }
-    .user-badge { cursor: pointer; padding: 4px 7px; border-radius: 4px; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .user-badge { display: none; align-items: center; gap: 8px; cursor: pointer; padding: 4px 7px; border-radius: 4px; }
     .user-badge:hover { background: rgba(255,255,255,.15); }
     .rank-avatar { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #fff; }
     .rank-avatar svg { width: 15px; height: 15px; }
@@ -96,7 +96,7 @@
   <header>
     <h1 onclick="showPage('home')" data-i18n="siteTitle">無限ツール</h1>
     <div class="header-right">
-      <div class="user-badge" onclick="handleHeaderUserClick()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleHeaderUserClick();}">
+      <div class="user-badge" style="display:none" onclick="handleHeaderUserClick()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleHeaderUserClick();}">
         <span id="header-rank-avatar" class="rank-avatar rank-normal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></span>
         <span id="header-username">GitHub</span>
       </div>
@@ -310,20 +310,21 @@
       return true;
     }
     function applyUserUI() {
+      const badge = document.querySelector('.user-badge');
       const username = document.getElementById('header-username');
       const avatar = document.getElementById('header-rank-avatar');
       const guestHero = document.getElementById('home-guest-hero');
       const userRec = document.getElementById('home-user-rec');
       if (!currentProfile) {
         currentRank = 'guest';
-        username.textContent = 'GitHub';
-        avatar.className = 'rank-avatar rank-normal';
+        badge.style.display = 'none';
         guestHero.style.display = 'block';
         userRec.style.display = 'none';
       } else {
         currentRank = rankOrder[currentProfile.rank] !== undefined ? currentProfile.rank : 'normal';
-        username.textContent = currentProfile.username || currentUser?.user_metadata?.username || 'User';
+        username.textContent = currentProfile.username || 'User';
         avatar.className = 'rank-avatar rank-' + currentRank;
+        badge.style.display = 'flex';
         guestHero.style.display = 'none';
         userRec.style.display = 'block';
       }
@@ -386,7 +387,7 @@
       if (!client) return setMessage('forgot-msg', 'Supabase SDKを読み込めませんでした。');
       const username = document.getElementById('forgot-username').value.trim();
       const email = document.getElementById('forgot-email').value.trim();
-      const msg = document.getElementById('forgot-msg');
+      msg = document.getElementById('forgot-msg');
       msg.style.color = '#d9534f';
       setMessage('forgot-msg', '');
       if (!username || !email) return setMessage('forgot-msg', 'ユーザー名とメールアドレスを入力してください。');
@@ -479,7 +480,6 @@
         await loadRecommendations();
       } catch (error) {
         console.error(error);
-        // Refresh from the database instead of showing an optimistic, potentially stale count.
         try {
           const { data, error: refreshError } = await client.from('profiles').select('*').eq('id', currentUser.id).single();
           if (!refreshError && data) { currentProfile = data; applyUserUI(); }
@@ -637,7 +637,7 @@
       }
     });
     window.addEventListener('DOMContentLoaded', async () => {
-      renderToolsTable(); renderRules(); renderLaps(); updateSwButtonsUI(1); updateSwButtonsUI(2);
+      renderToolsTable(); renderRules(); renderLaps(); updateSwButtonsUI(1); updateSwButtonsUI(2); applyUserUI();
       const client = getSb();
       if (!client) { console.error('Supabase SDK could not be loaded.'); return; }
       try {
