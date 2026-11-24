@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アカウント設定 | 無限ツール</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #fff; }
+    .topbar { height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; color: #fff; background: #5cb85c; }
+    .topbar a { color: inherit; text-decoration: none; font-weight: 600; }
+    .topbar span { font-size: .9rem; }
+    main { width: min(760px, 100%); margin: 0 auto; padding: 28px 18px; }
+    .layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 14px; align-items: stretch; }
+    .menu, .panel { border-radius: 8px; overflow: hidden; }
+    .menu { background: #e4e4e4; }
+    .menu-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 14px; border: 0; background: #d5d5d5; color: #222; text-align: left; font: inherit; font-weight: 700; cursor: pointer; }
+    .menu-toggle .chevron { transition: transform .2s ease; }
+    .menu-toggle[aria-expanded="false"] .chevron { transform: rotate(-90deg); }
+    .menu-items { display: grid; }
+    .menu-items[hidden] { display: none; }
+    .menu-item { width: 100%; padding: 13px 14px; border: 0; background: transparent; color: #333; text-align: left; font: inherit; cursor: pointer; }
+    .menu-item:hover, .menu-item[aria-current="page"] { background: #c9c9c9; }
+    .panel { min-height: 390px; padding: 18px; background: #f0f0f0; }
+    .panel h1 { margin: 0 0 22px; font-size: 1.2rem; }
+    .field { margin: 0 0 18px; }
+    .field label { display: block; margin-bottom: 6px; font-size: .9rem; }
+    .field input, .field textarea { width: 100%; max-width: 430px; padding: 10px 12px; border: 0; border-radius: 6px; background: #dedede; color: #222; font: inherit; }
+    .field textarea { min-height: 110px; resize: vertical; }
+    .actions { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
+    .primary { padding: 10px 16px; border: 0; border-radius: 4px; background: #5cb85c; color: #fff; font: inherit; cursor: pointer; }
+    .status { min-height: 1.4em; color: #347b34; font-size: .88rem; }
+    .placeholder { line-height: 1.6; color: #666; }
+    @media (max-width: 560px) { main { padding: 18px 12px; } .layout { grid-template-columns: 1fr; gap: 10px; } .panel { min-height: 320px; } .menu-items { grid-template-columns: repeat(2, minmax(0, 1fr)); } .menu-item { padding: 11px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar"><a href="index.html">無限ツール</a><span>アカウント設定</span></header>
+  <main>
+    <div class="layout">
+      <nav class="menu" aria-label="アカウントメニュー">
+        <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="true" aria-controls="menu-items">
+          <span>☰ メニュー</span><span class="chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div id="menu-items" class="menu-items">
+          <button class="menu-item" type="button" data-view="account" aria-current="page">アカウント設定</button>
+          <button class="menu-item" type="button" data-view="profile">プロフィール</button>
+          <button class="menu-item" type="button" data-view="creation">作成ツール</button>
+          <button class="menu-item" type="button" data-view="tools">利用ツール</button>
+        </div>
+      </nav>
+      <section id="panel" class="panel" aria-live="polite"></section>
+    </div>
+  </main>
+  <script>
+    'use strict';
+    const panel = document.getElementById('panel');
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuItems = document.getElementById('menu-items');
+    const pageContent = {
+      account: `<h1>アカウント設定</h1><form id="account-form"><div class="field"><label for="display-name">名前</label><input id="display-name" name="displayName" autocomplete="name" placeholder="表示名"></div><div class="field"><label for="recovery-email">復旧用メールアドレス</label><input id="recovery-email" name="recoveryEmail" type="email" autocomplete="email" placeholder="メールアドレス"></div><div class="actions"><button class="primary" type="submit">変更を保存</button><span id="status" class="status" role="status"></span></div></form>`,
+      profile: `<h1>プロフィール</h1><div class="field"><label for="profile-name">表示名</label><input id="profile-name" placeholder="表示名"></div><div class="field"><label for="profile-description">説明</label><textarea id="profile-description" placeholder="プロフィールを入力"></textarea></div><button class="primary" type="button" data-status="プロフィールを保存しました。">プロフィールを保存</button><p class="status" role="status"></p>`,
+      creation: `<h1>作成ツール</h1><p class="placeholder">作成ツールは現在準備中です。</p>`,
+      tools: `<h1>利用ツール</h1><p class="placeholder">利用したツールの一覧はここに表示されます。</p>`
+    };
+    function showView(view) {
+      panel.innerHTML = pageContent[view] || pageContent.account;
+      document.querySelectorAll('.menu-item').forEach((item) => {
+        if (item.dataset.view === view) item.setAttribute('aria-current', 'page');
+        else item.removeAttribute('aria-current');
+      });
+      const form = document.getElementById('account-form');
+      if (form) form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        document.getElementById('status').textContent = 'この画面はデザインプレビューです。保存機能は既存アプリとの接続後に有効になります。';
+      });
+      const action = panel.querySelector('[data-status]');
+      if (action) action.addEventListener('click', () => { panel.querySelector('.status').textContent = action.dataset.status; });
+    }
+    menuToggle.addEventListener('click', () => {
+      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', String(!expanded));
+      menuItems.hidden = expanded;
+    });
+    document.querySelectorAll('.menu-item').forEach((item) => item.addEventListener('click', () => showView(item.dataset.view)));
+    showView('account');
+  </script>
+</body>
+</html>
