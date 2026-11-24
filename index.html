@@ -265,7 +265,7 @@ English
 
 
 'use strict';
-const SUPABASE_URL = 'ttps://misnmawspfnogitmrjhe.supabase.co';
+const SUPABASE_URL = 'https://misnmawspfnogitmrjhe.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_1t8-2Ob1z5lOq1qrU7ASaA_Xavxz_Hq';
 let sb = null;
 let currentLang = 'ja';
@@ -594,7 +594,7 @@ const passVal = document.getElementById('acc-pass-input').value;
 const emailVal = document.getElementById('acc-email-input').value.trim();
 const nameOk = nameVal.length >= 1 && nameVal.length <= 40;
 const passOk = passVal === '' || passVal.length >= 6;
-const emailOk = emailVal === '' || /^[^\s@]+@[^\s@]+.[^\s@]+$/.test(emailVal);
+const emailOk = emailVal === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
 setStatusIndicator('status-name', nameOk);
 setStatusIndicator('status-pass', passOk);
 setStatusIndicator('status-email', emailOk);
